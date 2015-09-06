@@ -66,8 +66,8 @@ $(BIN):
 clean:
 	$(RM) -rf $(TARGET) $(BIN) $(GEN) $(BISON_XML)
 
-.PHONY: genhtml
-genhtml: | $(GEN)
+.PHONY: html
+html: | $(GEN)
 	$(BISON) --xml=$(BISON_XML) $(BISONFILES)
 	rm {location,position,stack}.hh parser.tab.{cpp,hpp}
 	xsltproc $(BISON_SHARE_DIR)/xslt/xml2xhtml.xsl $(BISON_XML) > $(BISON_HTML)

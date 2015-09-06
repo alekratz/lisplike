@@ -14,7 +14,7 @@ Building
 =
 To build the executable, run `make`.
 
-To generate an HTML representation of the grammar, run `make genhtml`. If you have a weird 'share' directory for Bison (i.e. not /usr/share/bison), you can set that using `make genhtml BISON_SHARE_DIR=/path/to/my/share/dir`.
+To generate an HTML representation of the grammar, run `make html`. If you have a weird 'share' directory for Bison (i.e. not /usr/share/bison), you can set that using `make html BISON_SHARE_DIR=/path/to/my/share/dir`.
 
 License
 =
