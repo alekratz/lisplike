@@ -50,21 +50,20 @@ class lisplike_driver;
 
 %%
 
-%start exp_list
-  ;
+%start unit;
 
-exp_list
-  : exp exp_list  { }
-  | %empty        { }
+unit
+  : exp { }
+  | %empty { }
   ;
 
 exp
-  : LPAREN "identifier" term_list RPAREN exp {  }
+  : LPAREN "identifier" term_list RPAREN {  }
   ;
 
 term_list 
   : term term_list { }
-  | %empty
+  | %empty { }
   ;
 
 term
