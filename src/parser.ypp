@@ -58,7 +58,7 @@ unit
   ;
 
 exp
-  : LPAREN "identifier" term_list RPAREN {  }
+  : LPAREN IDENTIFIER term_list RPAREN {  }
   ;
 
 term_list 
@@ -67,8 +67,8 @@ term_list
   ;
 
 term
-  : "identifier" { }
-  | "number" { }
+  : IDENTIFIER { }
+  | NUMBER { }
   | exp      { }
   ;
 
