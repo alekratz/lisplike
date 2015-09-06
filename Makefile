@@ -14,6 +14,9 @@ BISONFILES=$(SRC)/parser.ypp
 
 # Output files
 BISON_TARGET=$(GEN)/parser.cpp
+BISON_XML=$(BISONFILES:$(SRC)/%.ypp=$(GEN)/%.xml)
+BISON_HTML=$(BISON_XML:%.xml=%.html)
+BISON_SHARE_DIR=/usr/share/bison
 FLEX_TARGET=$(GEN)/scanner.cpp
 OFILES=$(CXXFILES:$(SRC)/%.cpp=$(BIN)/%.o) \
 	$(FLEX_TARGET:$(GEN)/%.cpp=$(BIN)/%.o) \
@@ -61,4 +64,10 @@ $(BIN):
 
 .PHONY: clean
 clean:
-	$(RM) -rf $(TARGET) $(BIN) $(GEN)
+	$(RM) -rf $(TARGET) $(BIN) $(GEN) $(BISON_XML)
+
+.PHONY: genhtml
+genhtml: | $(GEN)
+	$(BISON) --xml=$(BISON_XML) $(BISONFILES)
+	rm {location,position,stack}.hh parser.tab.{cpp,hpp}
+	xsltproc $(BISON_SHARE_DIR)/xslt/xml2xhtml.xsl $(BISON_XML) > $(BISON_HTML)
