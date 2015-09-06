@@ -20,8 +20,8 @@ OFILES=$(CXXFILES:$(SRC)/%.cpp=$(BIN)/%.o) \
 	$(BISON_TARGET:$(GEN)/%.cpp=$(BIN)/%.o)
 DEPFILES=$(OFILES:%.o=%.d)
 
-CXXFLAGS=-g -O2 -std=c++14 -I$(GEN) -I$(GEN)/include -Iinclude -MP -MMD
-#LDFLAGS=-g
+CXXFLAGS=-c -g -O2 -std=c++14 -I$(GEN) -I$(GEN)/include -Iinclude -MP -MMD
+LDFLAGS=-g
 LFLAGS=-+ --header
 BISONFLAGS=--defines=$(GEN)/include/parser.hpp
 
@@ -32,8 +32,20 @@ print-%: ; @echo $*=$($*)
 all: $(TARGET)
 
 -include $(DEPFILES)
-$(TARGET): $(CXXFILES) $(FLEX_TARGET) $(BISON_TARGET) | $(BIN)
-	$(CXX) $(CXXFLAGS) $(CXXFILES) $(FLEX_TARGET) $(BISON_TARGET) -o $(TARGET)
+$(TARGET): gencode $(OFILES)
+	$(CXX) $(LDFLAGS) $(OFILES) -o $(TARGET)
+
+$(BIN)/%.o: $(SRC)/%.cpp | $(BIN)
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+.PHONY: gencode
+gencode: $(FLEX_TARGET) $(BISON_TARGET)
+
+$(FLEX_TARGET:$(GEN)/%.cpp=$(BIN)/%.o): $(FLEX_TARGET) | $(BIN)
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+$(BISON_TARGET:$(GEN)/%.cpp=$(BIN)/%.o): $(BISON_TARGET) | $(BIN)
+	$(CXX) $(CXXFLAGS) $< -o $@
 
 $(FLEX_TARGET): $(BISON_TARGET) $(FLEXFILES)
 	$(FLEX) -o $(FLEX_TARGET) $(LFLAGS) $(FLEXFILES)
