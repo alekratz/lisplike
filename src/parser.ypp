@@ -59,19 +59,19 @@ exp_list
   ;
 
 exp
-: LPAREN "identifier" term_list RPAREN exp { $$ = 0; }
-;
+  : LPAREN "identifier" term_list RPAREN exp {  }
+  ;
 
 term_list 
   : term term_list { }
   | %empty
-;
+  ;
 
 term
   : "identifier" { }
   | "number" { }
   | exp      { }
-;
+  ;
 
 %%
 
