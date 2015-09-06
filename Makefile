@@ -23,7 +23,7 @@ OFILES=$(CXXFILES:$(SRC)/%.cpp=$(BIN)/%.o) \
 	$(BISON_TARGET:$(GEN)/%.cpp=$(BIN)/%.o)
 DEPFILES=$(OFILES:%.o=%.d)
 
-CXXFLAGS=-c -g -O2 -std=c++14 -I$(GEN) -I$(GEN)/include -Iinclude -MP -MMD
+CXXFLAGS=-c -g -O2 -std=c++14 -I$(GEN) -I$(GEN)/include -Iinclude -MP -MMD -Wall
 LDFLAGS=-g
 LFLAGS=-+ --header
 BISONFLAGS=--defines=$(GEN)/include/parser.hpp
