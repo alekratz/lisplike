@@ -1,5 +1,5 @@
 # Target, binary, and generated directory
-lisp-like
+lisplike
 bin/*
 gen/*
 *.d
