@@ -40,6 +40,7 @@ class lisplike_driver;
   END   0 "end of file"
   LPAREN "("
   RPAREN ")"
+  SQUOT "'"
 ;
 %token <std::string> IDENTIFIER "identifier"
 %token <int> NUMBER "number"
@@ -69,7 +70,12 @@ term_list
 term
   : IDENTIFIER { }
   | NUMBER { }
-  | exp      { }
+  | exp { }
+  | list { }
+  ;
+
+list
+  : SQUOT LPAREN term term_list RPAREN
   ;
 
 %%

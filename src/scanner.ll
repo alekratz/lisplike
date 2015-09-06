@@ -22,16 +22,21 @@ static yy::location loc;
 #pragma clang diagnostic ignored "-Wdeprecated-register"
 %}
 
-string    \"[^\n]*\" /*" /**/
+lparen    \(
+rparen    \)
+squot     \'
+qduot     \" /*"/**/
+
+string    dquot [^\n]* dquot
 ws        [\t ]
+newline   \n
 alpha     [a-zA-Z]
 dig       [0-9]
 
-ident     ({alpha}|_)({alpha}|_|{dig})*
+math_op   \+|-|\*|\/
+bool_op   =|<|>
+ident     ({alpha}|_|{math_op}|{bool_op})({alpha}|_|{math_op}|{bool_op}|{dig})*
 num       {dig}+
-
-lparen    \(
-rparen    \)
 
 %%
 
@@ -41,6 +46,7 @@ loc.step();
 %}
 
 {ws}      loc.step();
+{newline} { loc.lines(yyleng); loc.step(); }
 {ident}   return yy::lisplike_parser::make_IDENTIFIER(yytext, loc);
 {num}     {
   errno = 0;
@@ -51,6 +57,7 @@ loc.step();
 }
 {lparen}  return yy::lisplike_parser::make_LPAREN(loc);
 {rparen}  return yy::lisplike_parser::make_RPAREN(loc);
+{squot}   return yy::lisplike_parser::make_SQUOT(loc);
 %%
 
 int yyFlexLexer::yylex()
