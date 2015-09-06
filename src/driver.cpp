@@ -4,6 +4,9 @@
 
 #include <fstream>
 #include <sstream>
+#include <vector>
+#include <cstdlib>
+#include <getopt.h>
 
 lisplike_driver::lisplike_driver()
   : trace_scanning(false)
@@ -62,16 +65,69 @@ void lisplike_driver::error (const std::string& m)
   std::cerr << m << std::endl;
 }
 
-int main()
+using namespace std;
+
+static string filename;
+
+void parse_args(int argc, char **argv, lisplike_driver &driver)
 {
-  using namespace std;
+  while(1)
+  {
+    int optindex;
+    static struct option long_options[] = {
+      { "trace-parsing",    no_argument,    0, 'p' },
+      { "trace-scanning",   no_argument,    0, 's' },
+      { nullptr,            0,              0, 0 }
+    };
+
+    int c = getopt_long(argc, argv, "sph", long_options, &optindex);
+    if(c == -1)
+      break;
+    switch(c)
+    {
+      case 0:
+        cout << long_options[optindex].name << endl;;
+        break;
+      case 's':
+        driver.trace_scanning = true;
+        break;
+      case 'p':
+        driver.trace_parsing = true;
+        break;
+      case '?':
+      case 'h':
+        // todo: print usage
+        break;
+      default:
+        break;
+    }
+  }
+  
+  if(optind < argc)
+    filename = argv[optind++];
+  for(; optind < argc; optind++)
+    cout << "ignoring input file: " << argv[optind] << endl;
+}
+
+int main(int argc, char **argv)
+{
+  lisplike_driver driver;
+  parse_args(argc, argv, driver);
+
+  if(!filename.empty())
+  {
+    if(!driver.parse_file(filename))
+      exit(1);
+    exit(0);
+  }
 
   string line;
-  lisplike_driver driver;
   //driver.trace_scanning = true;
   //driver.trace_parsing = true;
   while(getline(cin, line))
   {
     bool result = driver.parse_string(line, "stdin");
+    if(result)
+      cout << "OK" << endl;
   }
 }
