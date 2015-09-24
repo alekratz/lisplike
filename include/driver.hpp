@@ -18,13 +18,11 @@ public:
 public:
   void scan_begin();
   void scan_end();
-  bool trace_scanning;
 
   bool parse_stream(std::istream& in, const std::string& sname);
   bool parse_string(const std::string& line, const std::string& sname);
   bool parse_file(const std::string& f);
   
-  bool trace_parsing;
 
   void error (const yy::location& l, const std::string& m);
   void error (const std::string& m);
@@ -33,6 +31,9 @@ public:
 public:
   std::unordered_map<std::string, int> variables;
   std::string streamname;
+  
+  bool trace_scanning;
+  bool trace_parsing;
   int result;
 
   lisplike_scanner* lexer;

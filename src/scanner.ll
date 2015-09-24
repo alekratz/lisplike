@@ -58,6 +58,8 @@ loc.step();
 {lparen}  return yy::lisplike_parser::make_LPAREN(loc);
 {rparen}  return yy::lisplike_parser::make_RPAREN(loc);
 {squot}   return yy::lisplike_parser::make_SQUOT(loc);
+
+.         { driver.error(loc, "unexpected token"); }
 %%
 
 int yyFlexLexer::yylex()

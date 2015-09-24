@@ -30,6 +30,7 @@ class lisplike_driver;
 {
 #include "driver.hpp"
 #include "scanner.hpp"
+#include "ll_type.hpp"
 #undef yylex
 #define yylex driver.lexer->lex
 }
@@ -44,8 +45,10 @@ class lisplike_driver;
 ;
 %token <std::string> IDENTIFIER "identifier"
 %token <int> NUMBER "number"
-%type <int> exp
+%token <std::string> STRING "string"
 
+%type <int> exp
+%type <int> term
 
 %printer { yyoutput << $$; } <*>;
 
@@ -54,7 +57,7 @@ class lisplike_driver;
 %start unit;
 
 unit
-  : exp { }
+  : exp unit { }
   | %empty { }
   ;
 
@@ -69,9 +72,10 @@ term_list
 
 term
   : IDENTIFIER { }
-  | NUMBER { }
-  | exp { }
-  | list { }
+  | NUMBER      { $$ = $1; }
+  | exp         { $$ = $1; }
+  | list        { }
+  | STRING      { }
   ;
 
 list
