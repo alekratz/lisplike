@@ -1,13 +1,15 @@
 #include "ll_type.hpp"
 
+using namespace std;
+
 /* getters */
 template<>
 double lisplike_value::get_value() const { return real_value; }
 template<>
-const std::string& lisplike_value::get_value() const { return str_value; }
+const string& lisplike_value::get_value() const { return str_value; }
 
 template<>
-void lisplike_value::set_value(const std::string& value)
+void lisplike_value::set_value(const string& value)
 {
   type = lisplike_type::str;
   str_value = value;
@@ -20,12 +22,12 @@ void lisplike_value::set_value(double value)
   real_value = value;
 }
 
-std::ostream& operator<<(std::ostream& os, const lisplike_value& ll_val)
+ostream& operator<<(ostream& os, const lisplike_value& ll_val)
 {
   switch(ll_val.get_type())
   {
     case lisplike_type::str:
-      os << ll_val.get_value<const std::string&>();
+      os << ll_val.get_value<const string&>();
       break;
     case lisplike_type::real:
       os << ll_val.get_value<double>();
@@ -36,5 +38,12 @@ std::ostream& operator<<(std::ostream& os, const lisplike_value& ll_val)
     case lisplike_type::none:
       os << "None";
   }
+  return os;
+}
+
+ostream& operator<<(ostream& os, const vector<lisplike_value>& ll_vals)
+{
+  for(auto ll : ll_vals)
+    os << ll << " ";
   return os;
 }

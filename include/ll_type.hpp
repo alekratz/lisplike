@@ -2,6 +2,7 @@
 #define LL_TYPE_HPP
 
 #include <string>
+#include <vector>
 #include <unordered_map>
 #include <sstream>
 #include <cstdint>
@@ -72,5 +73,6 @@ private:
 
 /* ostream definitions */
 std::ostream& operator<<(std::ostream& os, const lisplike_value& ll_val);
+std::ostream& operator<<(std::ostream& os, const std::vector<lisplike_value>& ll_vals);
 
 #endif /* LL_TYPE_HPP */

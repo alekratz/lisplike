@@ -9,6 +9,7 @@
 
 %code requires
 {
+#include <vector>
 #include <string>
 #include "ll_type.hpp"
 class lisplike_driver;
@@ -50,6 +51,7 @@ class lisplike_driver;
 
 %type <lisplike_value> exp
 %type <lisplike_value> term
+%type <std::vector<lisplike_value>> term_list
 
 %printer { yyoutput << $$; } <*>;
 
@@ -67,8 +69,8 @@ exp
   ;
 
 term_list 
-  : term term_list { }
-  | %empty { }
+  : term term_list { $2.push_back($1); }
+  | %empty { $$ = std::vector<lisplike_value>(); }
   ;
 
 term

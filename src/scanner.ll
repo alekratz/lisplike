@@ -25,6 +25,7 @@ static yy::location loc;
 lparen    \(
 rparen    \)
 squot     \'
+/* ignore the weird comment/double quote - syntax highlighting isn't smart enough to pick up the escaped quote */
 qduot     \" /*"/**/
 
 string    dquot [^\n]* dquot
