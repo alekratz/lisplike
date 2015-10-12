@@ -55,7 +55,9 @@ public:
   template<typename T>
   T get_value() const;
   template<typename T>
-  void set_value(const T& value);
+  void set_value(T value);
+  template<typename T>
+  void operator=(T value) { set_value<T>(value); }
 
   lisplike_type get_type() const
   {

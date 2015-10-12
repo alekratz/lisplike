@@ -14,7 +14,7 @@ void lisplike_value::set_value(const std::string& value)
 }
 
 template<>
-void lisplike_value::set_value(const double& value)
+void lisplike_value::set_value(double value)
 {
   type = lisplike_type::real;
   real_value = value;

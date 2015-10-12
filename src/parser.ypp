@@ -45,7 +45,7 @@ class lisplike_driver;
   SQUOT "'"
 ;
 %token <std::string> IDENTIFIER "identifier"
-%token <int> NUMBER "number"
+%token <double> NUMBER "number"
 %token <std::string> STRING "string"
 
 %type <lisplike_value> exp
