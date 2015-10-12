@@ -13,6 +13,7 @@ enum class lisplike_type
   str,
 //  int64,
   real,
+  list,
   dict,
   none,
 };
@@ -24,6 +25,7 @@ public:
   lisplike_value()
     : str_value()
     , real_value(0.0)
+    , list_value()
     , type(lisplike_type::none)
   {
 
@@ -37,6 +39,11 @@ public:
   lisplike_value(const char *val)
     : str_value(val)
     , type(lisplike_type::str)
+  { }
+
+  lisplike_value(const std::vector<lisplike_value>& val)
+    : list_value(val)
+    , type(lisplike_type::list)
   { }
 
 /*
@@ -68,6 +75,7 @@ public:
 private:
   std::string str_value;
   double real_value;
+  std::vector<lisplike_value> list_value;
   lisplike_type type;
 };
 

@@ -51,6 +51,7 @@ class lisplike_driver;
 
 %type <lisplike_value> exp
 %type <lisplike_value> term
+%type <lisplike_value> list
 %type <std::vector<lisplike_value>> term_list
 
 %printer { yyoutput << $$; } <*>;
@@ -86,13 +87,14 @@ term
     $$ = $1; 
   }
   | STRING      {
-      /* TODO */ 
-      /* $$ = $1; */ 
-    }
+    $$ = $1;
+  }
   ;
 
 list
-  : SQUOT LPAREN term term_list RPAREN
+  : SQUOT LPAREN term_list RPAREN {
+    $$ = $3;
+  }
   ;
 
 %%
