@@ -67,6 +67,7 @@ ostream& operator<<(ostream& os, const lisplike_value& ll_val)
       break;
     case lisplike_type::none:
       os << "None";
+      break;
   }
   return os;
 }
