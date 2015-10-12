@@ -1,6 +1,7 @@
 #include "driver.hpp"
 #include "scanner.hpp"
 #include "parser.hpp"
+#include "ll_type.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -123,8 +124,7 @@ int main(int argc, char **argv)
   }
 
   string line;
-  //driver.trace_scanning = true;
-  //driver.trace_parsing = true;
+  
   while(getline(cin, line))
   {
     bool result = driver.parse_string(line, "stdin");

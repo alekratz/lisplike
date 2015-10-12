@@ -10,6 +10,7 @@
 %code requires
 {
 #include <string>
+#include "ll_type.hpp"
 class lisplike_driver;
 }
 
@@ -47,8 +48,8 @@ class lisplike_driver;
 %token <int> NUMBER "number"
 %token <std::string> STRING "string"
 
-%type <int> exp
-%type <int> term
+%type <lisplike_value> exp
+%type <lisplike_value> term
 
 %printer { yyoutput << $$; } <*>;
 
@@ -71,11 +72,21 @@ term_list
   ;
 
 term
-  : IDENTIFIER { }
-  | NUMBER      { $$ = $1; }
-  | exp         { $$ = $1; }
-  | list        { }
-  | STRING      { }
+  : exp         { $$ = $1; }
+  | list        {
+    /* TODO */ 
+  }
+  | IDENTIFIER  {
+    /* TODO: resolve this to a number */ 
+    /* $$ = $1; */ 
+  }
+  | NUMBER      { 
+    $$ = $1; 
+  }
+  | STRING      {
+      /* TODO */ 
+      /* $$ = $1; */ 
+    }
   ;
 
 list

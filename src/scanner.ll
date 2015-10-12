@@ -45,19 +45,19 @@ num       {dig}+
 loc.step();
 %}
 
-{ws}      loc.step();
-{newline} { loc.lines(yyleng); loc.step(); }
-{ident}   return yy::lisplike_parser::make_IDENTIFIER(yytext, loc);
-{num}     {
-  errno = 0;
-  int64_t val = strtol(yytext, NULL, 10);
-  if(errno == ERANGE)
-    driver.error(loc, "integer is out of range");
-  return yy::lisplike_parser::make_NUMBER(val, loc);
-}
-{lparen}  return yy::lisplike_parser::make_LPAREN(loc);
-{rparen}  return yy::lisplike_parser::make_RPAREN(loc);
-{squot}   return yy::lisplike_parser::make_SQUOT(loc);
+{newline}   { loc.lines(yyleng); loc.step(); }
+{ws}        loc.step();
+{ident}     return yy::lisplike_parser::make_IDENTIFIER(yytext, loc);
+{num}       {
+    errno = 0;
+    int64_t val = strtol(yytext, NULL, 10);
+    if(errno == ERANGE)
+      driver.error(loc, "integer is out of range");
+    return yy::lisplike_parser::make_NUMBER(val, loc);
+  }
+{lparen}    return yy::lisplike_parser::make_LPAREN(loc);
+{rparen}    return yy::lisplike_parser::make_RPAREN(loc);
+{squot}     return yy::lisplike_parser::make_SQUOT(loc);
 
 .         { driver.error(loc, "unexpected token"); }
 %%
