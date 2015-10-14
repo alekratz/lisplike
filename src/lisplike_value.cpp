@@ -17,7 +17,13 @@ string ll_fundecl::gencode()
 
 string ll_funcall::gencode()
 {
-  return "";
+  string paramstr = "";
+  for(auto param : params)
+  {
+    if(param != nullptr)
+      paramstr += param->gencode() + ", ";
+  }
+  return format("%(%)", identifier, paramstr);
 }
 
 string ll_value::gencode()
