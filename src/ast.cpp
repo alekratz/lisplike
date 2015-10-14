@@ -14,9 +14,9 @@ string ll_fundecl_exp::gencode()
     for(auto it = term_list.begin(); it != term_list.end(); it++)
     {
         if(it + 1 == term_list.end())
-            linestr += "\treturn " + (*it)->gencode() + ";";
+            linestr += "\treturn " + (*it)->gencode() + ";\n";
         else
-            linestr += "\t" + (*it)->gencode() + "\n";
+            linestr += "\t" + (*it)->gencode() + ";\n";
     }
     linestr += "}\n";
     return linestr;
