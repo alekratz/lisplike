@@ -9,10 +9,15 @@ string ll_fundecl_exp::gencode()
 {
     string linestr = "ll_value " + identifier;
     linestr += "(";
-    linestr += pad_internal(params, ", ");
+    linestr += "ll_value " + pad_internal(params, ", ll_value ");
     linestr += ") {\n";
-    for(auto line : term_list)
-        linestr += "\t" + line->gencode() + "\n";
+    for(auto it = term_list.begin(); it != term_list.end(); it++)
+    {
+        if(it + 1 == term_list.end())
+            linestr += "\treturn " + (*it)->gencode() + ";";
+        else
+            linestr += "\t" + (*it)->gencode() + "\n";
+    }
     linestr += "}\n";
     return linestr;
 }
@@ -30,7 +35,7 @@ string ll_let_exp::gencode()
 
 string ll_if_exp::gencode()
 {
-    return format("if(%) { %;\n} else {\n %;\n}", bool_exp->gencode(), term1->gencode(), term2->gencode());
+    return format("[&](){if(%) { return %; } else { return %; }}()", bool_exp->gencode(), term1->gencode(), term2->gencode());
 }
 
 string ll_bool_exp::gencode()
