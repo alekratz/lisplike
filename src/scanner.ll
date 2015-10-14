@@ -10,9 +10,6 @@
 #include "scanner.hpp"
 #include "parser.hpp"
 
-// Location of the current token
-static yy::location loc;
-
 #define YY_USER_ACTION loc.columns(yyleng);
 
 # undef yywrap
@@ -25,6 +22,7 @@ static yy::location loc;
 /* keywords */
 fun_keyw    fun
 let_keyw    let
+if_keyw     if
 
 /* symbols */
 lparen        \(
@@ -43,8 +41,9 @@ dig             [0-9]
 /* function names */
 math_op     \+|-|\*|\/
 bool_op     =|<|>
-ident         ({alpha}|_|{math_op}|{bool_op})({alpha}|_|{math_op}|{bool_op}|{dig})*
+ident         ({alpha}|_)({alpha}|_|{dig})*
 num             {dig}+
+cond_sym    {bool_op}{bool_op}?
 
 %%
 
@@ -53,18 +52,21 @@ num             {dig}+
 loc.step();
 %}
 
-{newline}     { loc.lines(yyleng); loc.step(); }
-{ws}                loc.step();
-{fun_keyw}    return yy::lisplike_parser::make_FUN_KEYW(loc);
-{let_keyw}    return yy::lisplike_parser::make_LET_KEYW(loc);
+{newline}       { loc.lines(yyleng); loc.step(); }
+{ws}            loc.step();
+{fun_keyw}      return yy::lisplike_parser::make_FUN_KEYW(loc);
+{let_keyw}      return yy::lisplike_parser::make_LET_KEYW(loc);
+{if_keyw}       return yy::lisplike_parser::make_IF_KEYW(loc);
 {string}        return yy::lisplike_parser::make_STRING(yytext, loc);
 {ident}         return yy::lisplike_parser::make_IDENTIFIER(yytext, loc);
-{num}             {
-        errno = 0;
-        int64_t val = strtol(yytext, NULL, 10);
-        if(errno == ERANGE)
-            driver.error(loc, "integer is out of range");
-        return yy::lisplike_parser::make_NUMBER(val, loc);
+{cond_sym}      return yy::lisplike_parser::make_COND_SYM(yytext, loc);
+{math_op}       return yy::lisplike_parser::make_MATH_OP(yytext, loc);
+{num}           {
+    errno = 0;
+    int64_t val = strtol(yytext, NULL, 10);
+    if(errno == ERANGE)
+        driver.error(loc, "integer is out of range");
+    return yy::lisplike_parser::make_NUMBER(val, loc);
     }
 {lparen}        return yy::lisplike_parser::make_LPAREN(loc);
 {rparen}        return yy::lisplike_parser::make_RPAREN(loc);

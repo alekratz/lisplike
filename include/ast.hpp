@@ -6,6 +6,9 @@
 #include "ast/ll_funcall_exp.hpp"
 #include "ast/ll_fundecl_exp.hpp"
 #include "ast/ll_let_exp.hpp"
+#include "ast/ll_if_exp.hpp"
+#include "ast/ll_bool_exp.hpp"
+#include "ast/ll_math_exp.hpp"
 #include "ast/ll_term.hpp"
 
 #endif /* AST_HPP */

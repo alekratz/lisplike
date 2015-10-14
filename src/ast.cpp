@@ -34,6 +34,26 @@ string ll_let_exp::gencode()
     return format("ll_value % = %;", identifier, term->gencode());
 }
 
+string ll_if_exp::gencode()
+{
+    return format("if(%) { % } else { % }", cond_exp->gencode(), term1->gencode(), term2->gencode());
+}
+
+string ll_bool_exp::gencode()
+{
+    // maybe surround this with parens later
+    return format("% % %", term1->gencode(), cond_sym, term2->gencode());
+}
+
+string ll_math_exp::gencode()
+{
+    string math_exp;
+    for(auto term : term_list)
+        math_exp += term->gencode() + math_op;
+    math_exp += "0";
+    return math_exp;
+}
+
 string ll_term::gencode()
 {
     switch(type)

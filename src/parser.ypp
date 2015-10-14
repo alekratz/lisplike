@@ -49,15 +49,19 @@ class lisplike_driver;
     IF_KEYW     "if"
 ;
 %token <std::string> IDENTIFIER "identifier"
-%token <double> NUMBER "number"
-%token <std::string> STRING "string"
+%token <long double> NUMBER     "number"
+%token <std::string> STRING     "string"
+%token <std::string> COND_SYM   "cond_sym"
+%token <std::string> MATH_OP    "math_op"
 
 %type <ll_children> unit
 %type <ll_tree_p> exp
 %type <ll_tree_p> funcall_exp
 %type <ll_tree_p> fundecl_exp
 %type <ll_tree_p> let_exp
-//%type <ll_tree_p> if_exp
+%type <ll_tree_p> if_exp
+%type <ll_tree_p> bool_exp
+%type <ll_tree_p> math_exp
 %type <ll_children> term_list
 %type <ll_tree_p> term
 %type <ll_tree_p> list
@@ -81,6 +85,9 @@ exp
     : funcall_exp   { $$ = $1; }
     | fundecl_exp   { $$ = $1; }
     | let_exp       { $$ = $1; }
+    | if_exp        { $$ = $1; }
+    | bool_exp      { $$ = $1; }
+    | math_exp      { $$ = $1; }
     ;
 
 funcall_exp
@@ -100,14 +107,26 @@ let_exp
         $$ = std::make_shared<ll_let_exp>(ll_let_exp($3, ll_term_cast($4))); 
     }
     ;
-/*
+
 if_exp
-    : LPAREN IF_KEYW cond_exp term term RPAREN {
-        // TODO : add single if that skips the else
-        //$$ = std::make_shared<ll_if_exp>(ll_if_exp($3, $4, $5));
+    : LPAREN IF_KEYW bool_exp term term RPAREN {
+        $$ = std::make_shared<ll_if_exp>(ll_if_exp($3, $4, $5));
     }
     ;
-*/
+
+bool_exp
+    : LPAREN COND_SYM term term RPAREN {
+        $$ = std::make_shared<ll_bool_exp>(ll_bool_exp($2, $3, $4));
+    }
+    ;
+
+math_exp
+    : LPAREN MATH_OP term_list RPAREN {
+        if($3.size() < 2)
+            driver.error(driver.lexer->loc, "math expression requires at least two arguments");
+        $$ = std::make_shared<ll_math_exp>(ll_math_exp($2, $3));
+    }
+
 term_list 
     : term term_list { 
         $2.insert($2.begin(), $1);
