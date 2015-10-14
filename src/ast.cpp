@@ -1,5 +1,6 @@
 #include "ast.hpp"
 #include "format.hpp"
+#include "util.hpp"
 #include <string>
 
 using namespace std;
@@ -8,9 +9,7 @@ string ll_fundecl_exp::gencode()
 {
     string linestr = "ll_value " + identifier;
     linestr += "(";
-    for(auto param : params->list_val)
-        linestr += param->gencode() + " ";
-        // TODO : pad interior with commas
+    linestr += pad_internal(params->list_val, ", ");
     linestr += ") {\n";
     for(auto line : term_list)
         linestr += "\t" + line->gencode() + "\n";
@@ -20,12 +19,7 @@ string ll_fundecl_exp::gencode()
 
 string ll_funcall_exp::gencode()
 {
-    string termstr = "";
-    for(auto term : term_list)
-    {
-        if(term != nullptr)
-            termstr += term->gencode() + ", ";
-    }
+    string termstr = pad_internal(term_list, ", ");
     return format("%(%)", identifier, termstr);
 }
 
@@ -47,10 +41,9 @@ string ll_bool_exp::gencode()
 
 string ll_math_exp::gencode()
 {
-    string math_exp;
-    for(auto term : term_list)
-        math_exp += term->gencode() + math_op;
-    math_exp += "0";
+    string math_exp = "(";
+    math_exp += pad_internal(term_list, math_op);
+    math_exp += ")";
     return math_exp;
 }
 

@@ -6,4 +6,8 @@
 
 typedef const std::string& cstref;
 
+#include "ast.hpp"
+
+std::string pad_internal(const ll_children& terms, cstref inner);
+
 #endif
