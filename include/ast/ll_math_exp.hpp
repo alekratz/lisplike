@@ -4,6 +4,9 @@
 #include "ll_tree.hpp"
 #include "util.hpp"
 
+class ll_math_exp;
+typedef std::shared_ptr<ll_math_exp> ll_math_exp_p;
+
 class ll_math_exp
     : public ll_tree
 {

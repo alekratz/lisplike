@@ -8,6 +8,7 @@ enum class ll_term_type
     str,
     real,
     list,
+    exp,
 //    dict,
 };
 
@@ -30,6 +31,9 @@ public:
     ll_term(const ll_children& val)
         : list_val(val)
         , type(ll_term_type::list) { }
+    ll_term(ll_tree_p val)
+        : exp_val(val)
+        , type(ll_term_type::exp) { }
     virtual ~ll_term() = default;
 
 public:
@@ -40,6 +44,7 @@ public:
     long double real_val;
     ll_children list_val;
     // TODO : dict_value
+    ll_tree_p exp_val;
     ll_term_type type;
 
 };

@@ -9,7 +9,7 @@ string ll_fundecl_exp::gencode()
 {
     string linestr = "ll_value " + identifier;
     linestr += "(";
-    linestr += pad_internal(params->list_val, ", ");
+    linestr += pad_internal(params, ", ");
     linestr += ") {\n";
     for(auto line : term_list)
         linestr += "\t" + line->gencode() + "\n";
@@ -30,7 +30,7 @@ string ll_let_exp::gencode()
 
 string ll_if_exp::gencode()
 {
-    return format("if(%) { \nreturn %;\n} else {\n %;\n}", cond_exp->gencode(), term1->gencode(), term2->gencode());
+    return format("if(%) { %;\n} else {\n %;\n}", bool_exp->gencode(), term1->gencode(), term2->gencode());
 }
 
 string ll_bool_exp::gencode()
@@ -60,6 +60,8 @@ string ll_term::gencode()
             /*
         case ll_term_type::dict:
             */
+        case ll_term_type::exp:
+            return exp_val->gencode();
         default:
             assert(false && "unreachable");
             break;

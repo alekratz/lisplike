@@ -5,18 +5,17 @@
 #include "ll_term.hpp"
 #include <cassert>
 
+class ll_fundecl_exp;
+typedef std::shared_ptr<ll_fundecl_exp> ll_fundecl_exp_p;
+
 class ll_fundecl_exp
     : public ll_tree
 {
 public:
-    ll_fundecl_exp(cstref identifier, ll_term_p params, ll_children term_list)
+    ll_fundecl_exp(cstref identifier, ll_children params, ll_children term_list)
     : identifier(identifier)
     , params(params)
-    , term_list(term_list)
-    {
-        assert(params->type == ll_term_type::list 
-            && "Params passed to ll_fundecl_exp AST was a term, but not a list term");
-    }
+    , term_list(term_list) { }
     virtual ~ll_fundecl_exp() = default;
 
 public:
@@ -24,7 +23,7 @@ public:
 
 public:
     std::string identifier;
-    ll_term_p params;
+    ll_children params;
     ll_children term_list;
 };
 

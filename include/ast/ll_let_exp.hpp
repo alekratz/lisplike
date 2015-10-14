@@ -3,6 +3,9 @@
 
 #include "ll_tree.hpp"
 
+class ll_let_exp;
+typedef std::shared_ptr<ll_let_exp> ll_let_exp_p;
+
 class ll_let_exp
     : public ll_tree
 {

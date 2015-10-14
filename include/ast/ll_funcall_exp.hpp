@@ -4,6 +4,9 @@
 #include "ll_tree.hpp"
 #include "util.hpp"
 
+class ll_funcall_exp;
+typedef std::shared_ptr<ll_funcall_exp> ll_funcall_exp_p;
+
 class ll_funcall_exp
     : public ll_tree
 {
