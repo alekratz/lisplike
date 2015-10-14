@@ -61,7 +61,7 @@ string ll_term::gencode()
         case ll_term_type::real:
             return format("%", real_val);
         case ll_term_type::list:
-            return format("%", list_val);
+            return format("{ % }", pad_internal(list_val, ", "));
             /*
         case ll_term_type::dict:
             */
