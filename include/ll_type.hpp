@@ -18,6 +18,11 @@ enum class lisplike_type
   none,
 };
 
+
+/*
+ * TODO : maybe rename this to lisplike_term? or ll_term?
+ */
+
 class lisplike_value
 {
 public:

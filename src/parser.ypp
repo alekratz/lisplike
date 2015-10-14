@@ -44,7 +44,6 @@ class lisplike_driver;
   LPAREN "("
   RPAREN ")"
   SQUOT "'"
-  DQUOT "\""
   FUN_KEYW  "fun"
   LET_KEYW  "let"
 ;
