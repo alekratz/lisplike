@@ -30,7 +30,7 @@ string ll_let_exp::gencode()
 
 string ll_if_exp::gencode()
 {
-    return format("if(%) { % } else { % }", cond_exp->gencode(), term1->gencode(), term2->gencode());
+    return format("if(%) { \nreturn %;\n} else {\n %;\n}", cond_exp->gencode(), term1->gencode(), term2->gencode());
 }
 
 string ll_bool_exp::gencode()
@@ -76,6 +76,6 @@ ostream& operator<<(ostream& os, const ll_tree_p& ll_tree)
 ostream& operator<<(ostream& os, const ll_children& children)
 {
     for(auto ll : children)
-        os << ll->gencode() << " ";
+        os << ll->gencode() << "\n";
     return os;
 }
