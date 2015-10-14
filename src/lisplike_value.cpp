@@ -1,4 +1,5 @@
 #include "ll_type.hpp"
+#include "format.hpp"
 
 using namespace std;
 
@@ -47,6 +48,22 @@ void lisplike_value::set_value(vector<lisplike_value> list)
 {
   type = lisplike_type::list;
   list_value = list;
+}
+
+std::string lisplike_value::genlet(const string& identifier)
+{
+  switch(type)
+  {
+    case lisplike_type::str:
+      return format("lisplike_value % = %;", identifier, str_value);
+    case lisplike_type::real:
+      return format("lisplike_value % = %;", identifier, real_value);
+    case lisplike_type::list:
+      return format("lisplike_value % = { % }", identifier, list_value);
+    case lisplike_type::none:
+      return format("lisplike_value %;", identifier);
+  }
+  return " ;; ";
 }
 
 ostream& operator<<(ostream& os, const lisplike_value& ll_val)

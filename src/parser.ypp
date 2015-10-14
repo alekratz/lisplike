@@ -44,12 +44,19 @@ class lisplike_driver;
   LPAREN "("
   RPAREN ")"
   SQUOT "'"
+  DQUOT "\""
+  FUN_KEYW  "fun"
+  LET_KEYW  "let"
 ;
 %token <std::string> IDENTIFIER "identifier"
 %token <double> NUMBER "number"
 %token <std::string> STRING "string"
 
 %type <lisplike_value> exp
+%type <lisplike_value> funcall_exp
+/* TODO: add a "function" type to the lisplike_value */
+/* %type <lisplike_value> fundecl_exp */
+%type <lisplike_value> let_exp
 %type <lisplike_value> term
 %type <lisplike_value> list
 %type <std::vector<lisplike_value>> term_list
@@ -66,35 +73,58 @@ unit
   ;
 
 exp
-  : LPAREN IDENTIFIER term_list RPAREN {  }
+  : funcall_exp { $$ = $1; }
+  | fundecl_exp { $$ = lisplike_value(); } /* i.e. none */
+  | let_exp     { $$ = $1; }
+  ;
+
+funcall_exp
+  : LPAREN IDENTIFIER term_list RPAREN {
+    // Call a function - the identifier
+    std::string fun_name = $2;
+    std::vector<lisplike_value> terms = $3;
+    // std::cout << "calling " << fun_name << " with args " << terms << std::endl;
+    
+  }
+  ;
+
+fundecl_exp
+  : LPAREN FUN_KEYW IDENTIFIER list term_list RPAREN {
+    // Register a new function
+    std::string fun_name = $3;
+    lisplike_value args = $4;
+    std::vector<lisplike_value> lines = $5;
+  }
+  ;
+
+let_exp
+  : LPAREN LET_KEYW IDENTIFIER term RPAREN {
+    // Register a new variable
+    std::cout << $4.genlet($3) << std::endl;
+  }
   ;
 
 term_list 
-  : term term_list { $2.push_back($1); }
+  : term term_list { 
+    $2.push_back($1);
+    $$ = $2;
+  }
   | %empty { $$ = std::vector<lisplike_value>(); }
   ;
 
 term
   : exp         { $$ = $1; }
-  | list        {
-    /* TODO */ 
-  }
+  | list        { $$ = $1; }
   | IDENTIFIER  {
-    /* TODO: resolve this to a number */ 
-    /* $$ = $1; */ 
-  }
-  | NUMBER      { 
+    /* TODO: resolve this to a value */ 
     $$ = $1; 
   }
-  | STRING      {
-    $$ = $1;
-  }
+  | NUMBER      { $$ = $1; }
+  | STRING      { $$ = $1; }
   ;
 
 list
-  : SQUOT LPAREN term_list RPAREN {
-    $$ = $3;
-  }
+  : SQUOT LPAREN term_list RPAREN { $$ = $3; }
   ;
 
 %%

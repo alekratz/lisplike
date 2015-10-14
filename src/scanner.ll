@@ -22,18 +22,25 @@ static yy::location loc;
 #pragma clang diagnostic ignored "-Wdeprecated-register"
 %}
 
+/* keywords */
+fun_keyw  fun
+let_keyw  let
+
+/* symbols */
 lparen    \(
 rparen    \)
 squot     \'
-/* ignore the weird comment/double quote - syntax highlighting isn't smart enough to pick up the escaped quote */
-qduot     \" /*"/**/
+dquot     \"
+/* ignore the weird comment/double quote - syntax highlighting isn't smart enough to pick up the escaped quote "*/
 
-string    dquot [^\n]* dquot
+/* literals */
+string    {dquot}[^\n]*{dquot}
 ws        [\t ]
 newline   \n
 alpha     [a-zA-Z]
 dig       [0-9]
 
+/* function names */
 math_op   \+|-|\*|\/
 bool_op   =|<|>
 ident     ({alpha}|_|{math_op}|{bool_op})({alpha}|_|{math_op}|{bool_op}|{dig})*
@@ -48,6 +55,9 @@ loc.step();
 
 {newline}   { loc.lines(yyleng); loc.step(); }
 {ws}        loc.step();
+{fun_keyw}  return yy::lisplike_parser::make_FUN_KEYW(loc);
+{let_keyw}  return yy::lisplike_parser::make_LET_KEYW(loc);
+{string}    return yy::lisplike_parser::make_STRING(yytext, loc);
 {ident}     return yy::lisplike_parser::make_IDENTIFIER(yytext, loc);
 {num}       {
     errno = 0;

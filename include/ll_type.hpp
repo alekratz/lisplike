@@ -58,6 +58,10 @@ public:
     , type(lisplike_type::real)
   { }
 
+  /* operations */
+public:
+  std::string genlet(const std::string& identifier);
+
   /* properties */
 public:
   template<typename T>
