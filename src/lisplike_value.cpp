@@ -6,11 +6,11 @@ using namespace std;
 
 string ll_fundecl::gencode()
 {
-  string linestr = "";
+  string linestr = identifier + "\n";
   for(auto line : lines)
   {
     if(line != nullptr)
-      linestr += line->gencode() + "\n";
+      linestr += "\t" + line->gencode() + "\n";
   }
   return linestr;
 }

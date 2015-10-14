@@ -113,7 +113,7 @@ term_list
   ;
 
 term
-  : exp         { $$ = nullptr; }
+  : exp         { $$ = $1; }
   | list        { $$ = $1; }
   | IDENTIFIER  {
     /* TODO: resolve this to a value */ 
