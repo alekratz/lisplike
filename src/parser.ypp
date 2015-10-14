@@ -100,7 +100,7 @@ fundecl_exp
 let_exp
   : LPAREN LET_KEYW IDENTIFIER term RPAREN {
     $$ = std::make_shared<ll_let>(ll_let($3, $4));
-    std::cout << $$->gencode() << std::endl;
+    std::cout << $$ << std::endl; // output for testing reasons
   }
   ;
 
