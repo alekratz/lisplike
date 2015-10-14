@@ -11,32 +11,32 @@ class lisplike_scanner;
 class lisplike_driver
 {
 public:
-  lisplike_driver();
-  virtual ~lisplike_driver();
+    lisplike_driver();
+    virtual ~lisplike_driver();
 
-  /* operations */
+    /* operations */
 public:
-  void scan_begin();
-  void scan_end();
+    void scan_begin();
+    void scan_end();
 
-  bool parse_stream(std::istream& in, const std::string& sname);
-  bool parse_string(const std::string& line, const std::string& sname);
-  bool parse_file(const std::string& f);
-  
+    bool parse_stream(std::istream& in, const std::string& sname);
+    bool parse_string(const std::string& line, const std::string& sname);
+    bool parse_file(const std::string& f);
+    
 
-  void error (const yy::location& l, const std::string& m);
-  void error (const std::string& m);
+    void error (const yy::location& l, const std::string& m);
+    void error (const std::string& m);
 
-  /* members */
+    /* members */
 public:
-  std::unordered_map<std::string, int> variables;
-  std::string streamname;
-  
-  bool trace_scanning;
-  bool trace_parsing;
-  int result;
+    std::unordered_map<std::string, int> variables;
+    std::string streamname;
+    
+    bool trace_scanning;
+    bool trace_parsing;
+    int result;
 
-  lisplike_scanner* lexer;
+    lisplike_scanner* lexer;
 };
 
 #endif /* DRIVER_HPP */

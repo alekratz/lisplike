@@ -4,11 +4,11 @@
 class lisplike_compiler
 {
 public:
-  lisplike_compiler();
-  virtual ~lisplike_compiler() = default;
+    lisplike_compiler();
+    virtual ~lisplike_compiler() = default;
 
 public:
-  std::string compile(const std::string input_text);
+    std::string compile(const std::string input_text);
 };
 
 #endif

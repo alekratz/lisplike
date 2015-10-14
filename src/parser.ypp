@@ -22,8 +22,8 @@ class lisplike_driver;
 %locations
 %initial-action
 {
-  // Initialize the initial location
-  @$.begin.filename = @$.end.filename = &driver.streamname;
+    // Initialize the initial location
+    @$.begin.filename = @$.end.filename = &driver.streamname;
 }
 
 %define parse.trace
@@ -41,12 +41,12 @@ class lisplike_driver;
 
 %define api.token.prefix {TOK_}
 %token
-  END   0 "end of file"
-  LPAREN "("
-  RPAREN ")"
-  SQUOT "'"
-  FUN_KEYW  "fun"
-  LET_KEYW  "let"
+    END     0 "end of file"
+    LPAREN "("
+    RPAREN ")"
+    SQUOT "'"
+    FUN_KEYW    "fun"
+    LET_KEYW    "let"
 ;
 %token <std::string> IDENTIFIER "identifier"
 %token <double> NUMBER "number"
@@ -70,66 +70,66 @@ class lisplike_driver;
 %start unit;
 
 unit
-  : exp unit { 
-    $2.insert($2.begin(), $1);
-    $$ = $2;
-  }
-  | %empty { $$ = ll_line_vec(); }
-  ;
+    : exp unit { 
+        $2.insert($2.begin(), $1);
+        $$ = $2;
+    }
+    | %empty { $$ = ll_line_vec(); }
+    ;
 
 exp
-  : funcall_exp { $$ = $1; }
-  | fundecl_exp { $$ = $1; }
-  | let_exp     { $$ = $1; }
-  ;
+    : funcall_exp { $$ = $1; }
+    | fundecl_exp { $$ = $1; }
+    | let_exp         { $$ = $1; }
+    ;
 
 funcall_exp
-  : LPAREN IDENTIFIER term_list RPAREN {
-    $$ = std::make_shared<ll_funcall>(ll_funcall($2, $3));
-    std::cout << $$ << std::endl;
-  }
-  ;
+    : LPAREN IDENTIFIER term_list RPAREN {
+        $$ = std::make_shared<ll_funcall>(ll_funcall($2, $3));
+        std::cout << $$ << std::endl;
+    }
+    ;
 
 fundecl_exp
-  : LPAREN FUN_KEYW IDENTIFIER list term_list RPAREN {
-    $$ = std::make_shared<ll_fundecl>(ll_fundecl($3, $4, $5)); 
-    std::cout << $$ << std::endl;
-  }
-  ;
+    : LPAREN FUN_KEYW IDENTIFIER list term_list RPAREN {
+        $$ = std::make_shared<ll_fundecl>(ll_fundecl($3, $4, $5)); 
+        std::cout << $$ << std::endl;
+    }
+    ;
 
 let_exp
-  : LPAREN LET_KEYW IDENTIFIER term RPAREN {
-    $$ = std::make_shared<ll_let>(ll_let($3, $4));
-    std::cout << $$ << std::endl; // output for testing reasons
-  }
-  ;
+    : LPAREN LET_KEYW IDENTIFIER term RPAREN {
+        $$ = std::make_shared<ll_let>(ll_let($3, $4));
+        std::cout << $$ << std::endl; // output for testing reasons
+    }
+    ;
 
 term_list 
-  : term term_list { 
-    $2.insert($2.begin(), $1);
-    $$ = $2;
-  }
-  | %empty { $$ = ll_line_vec(); }
-  ;
+    : term term_list { 
+        $2.insert($2.begin(), $1);
+        $$ = $2;
+    }
+    | %empty { $$ = ll_line_vec(); }
+    ;
 
 term
-  : exp         { $$ = $1; }
-  | list        { $$ = $1; }
-  | IDENTIFIER  {
-    /* TODO: resolve this to a value */ 
-    $$ = std::make_shared<ll_value, cstref>($1); 
-  }
-  | NUMBER      { $$ = std::make_shared<ll_value>(ll_value($1)); }
-  | STRING      { $$ = std::make_shared<ll_value, cstref>($1); }
-  ;
+    : exp                 { $$ = $1; }
+    | list                { $$ = $1; }
+    | IDENTIFIER    {
+        /* TODO: resolve this to a value */ 
+        $$ = std::make_shared<ll_value, cstref>($1); 
+    }
+    | NUMBER            { $$ = std::make_shared<ll_value>(ll_value($1)); }
+    | STRING            { $$ = std::make_shared<ll_value, cstref>($1); }
+    ;
 
 list
-  : SQUOT LPAREN term_list RPAREN { $$ = std::make_shared<ll_value>($3); }
-  ;
+    : SQUOT LPAREN term_list RPAREN { $$ = std::make_shared<ll_value>($3); }
+    ;
 
 %%
 
 void yy::lisplike_parser::error(const location_type& l, const std::string& m)
 {
-  driver.error(l, m);
+    driver.error(l, m);
 }
