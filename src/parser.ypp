@@ -70,6 +70,7 @@ unit
     : exp unit { 
         $2.insert($2.begin(), $1);
         $$ = $2;
+        driver.ast = $$;
     }
     | %empty { $$ = ll_children(); }
     ;
@@ -83,22 +84,18 @@ exp
 funcall_exp
     : LPAREN IDENTIFIER term_list RPAREN {
         $$ = std::make_shared<ll_funcall_exp>(ll_funcall_exp($2, $3));
-        std::cout << $$ << std::endl;
     }
     ;
 
 fundecl_exp
     : LPAREN FUN_KEYW IDENTIFIER list term_list RPAREN {
-        $$ = std::make_shared<ll_fundecl_exp>(ll_fundecl_exp($3, 
-            std::dynamic_pointer_cast<ll_term>($4), $5)); 
-        std::cout << $$ << std::endl;
+        $$ = std::make_shared<ll_fundecl_exp>(ll_fundecl_exp($3, std::dynamic_pointer_cast<ll_term>($4), $5));
     }
     ;
 
 let_exp
-    : LPAREN LET_KEYW IDENTIFIER term RPAREN {
-        $$ = std::make_shared<ll_let_exp>(ll_let_exp($3, std::dynamic_pointer_cast<ll_term>($4)));
-        std::cout << $$ << std::endl; // output for testing reasons
+    : LPAREN LET_KEYW IDENTIFIER term RPAREN { 
+        $$ = std::make_shared<ll_let_exp>(ll_let_exp($3, std::dynamic_pointer_cast<ll_term>($4))); 
     }
     ;
 
@@ -111,14 +108,14 @@ term_list
     ;
 
 term
-    : exp                 { $$ = $1; }
-    | list                { $$ = $1; }
+    : exp           { $$ = $1; }
+    | list          { $$ = $1; }
     | IDENTIFIER    {
         /* TODO: resolve this to a value */
-        $$ = std::make_shared<ll_term, cstref>($1); 
+        $$ = std::make_shared<ll_term, cstref>($1);
     }
-    | NUMBER            { $$ = std::make_shared<ll_term>(ll_term($1)); }
-    | STRING            { $$ = std::make_shared<ll_term, cstref>($1); }
+    | NUMBER        { $$ = std::make_shared<ll_term>(ll_term($1)); }
+    | STRING        { $$ = std::make_shared<ll_term, cstref>($1); }
     ;
 
 list

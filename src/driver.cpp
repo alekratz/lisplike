@@ -9,6 +9,8 @@
 #include <cstdlib>
 #include <getopt.h>
 
+using namespace std;
+
 lisplike_driver::lisplike_driver()
     : trace_scanning(false)
     , trace_parsing(false)
@@ -19,7 +21,7 @@ lisplike_driver::lisplike_driver()
 lisplike_driver::~lisplike_driver()
     { }
 
-bool lisplike_driver::parse_stream(std::istream& in, const std::string& sname)
+bool lisplike_driver::parse_stream(istream& in, const string& sname)
 {
     streamname = sname;
     lisplike_scanner scanner(&in);
@@ -27,24 +29,29 @@ bool lisplike_driver::parse_stream(std::istream& in, const std::string& sname)
     lexer = &scanner;
     yy::lisplike_parser parser(*this);
     parser.set_debug_level(trace_parsing);
-    return parser.parse() == 0;
+    // failure
+    if(parser.parse() != 0)
+        return false;
+    // success
+    cout << ast << endl;
+    return true;
 }
 
-bool lisplike_driver::parse_string(const std::string& line, const std::string& sname)
+bool lisplike_driver::parse_string(const string& line, const string& sname)
 {
-    std::istringstream iss(line);
+    istringstream iss(line);
     return parse_stream(iss, sname);
 }
 
-bool lisplike_driver::parse_file(const std::string& filename)
+bool lisplike_driver::parse_file(const string& filename)
 {
-    std::ifstream in(filename);
+    ifstream in(filename);
     if(!in.good()) return false;
     return parse_stream(in, filename);
 }
 
 /*
-int lisplike_driver::parse(const std::string& f)
+int lisplike_driver::parse(const string& f)
 {
     file = f;
     scan_begin();
@@ -56,14 +63,14 @@ int lisplike_driver::parse(const std::string& f)
 }
 */
 
-void lisplike_driver::error (const yy::location& l, const std::string& m)
+void lisplike_driver::error (const yy::location& l, const string& m)
 {
-    std::cerr << l << ": " << m << std::endl;
+    cerr << l << ": " << m << endl;
 }
 
-void lisplike_driver::error (const std::string& m)
+void lisplike_driver::error (const string& m)
 {
-    std::cerr << m << std::endl;
+    cerr << m << endl;
 }
 
 using namespace std;

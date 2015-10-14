@@ -9,16 +9,11 @@ string ll_fundecl_exp::gencode()
     string linestr = "ll_value " + identifier;
     linestr += "(";
     for(auto param : params->list_val)
-    {
         linestr += param->gencode() + " ";
         // TODO : pad interior with commas
-    }
     linestr += ") {\n";
     for(auto line : term_list)
-    {
-        if(line != nullptr)
-            linestr += "\t" + line->gencode() + "\n";
-    }
+        linestr += "\t" + line->gencode() + "\n";
     linestr += "}\n";
     return linestr;
 }

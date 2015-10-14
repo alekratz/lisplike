@@ -35,6 +35,7 @@ public:
     bool trace_scanning;
     bool trace_parsing;
     int result;
+    ll_children ast;
 
     lisplike_scanner* lexer;
 };
