@@ -44,4 +44,9 @@ public:
 
 };
 
+inline ll_term_p ll_term_cast(ll_tree_p tree_p)
+{
+    return std::dynamic_pointer_cast<ll_term>(tree_p);
+}
+
 #endif
