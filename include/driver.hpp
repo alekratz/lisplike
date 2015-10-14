@@ -3,7 +3,7 @@
 
 #include <string>
 #include <unordered_map>
-//#include "scanner.hpp"
+#include <iostream>
 #include "parser.hpp"
 
 class lisplike_scanner;
@@ -19,9 +19,9 @@ public:
     void scan_begin();
     void scan_end();
 
-    bool parse_stream(std::istream& in, const std::string& sname);
-    bool parse_string(const std::string& line, const std::string& sname);
-    bool parse_file(const std::string& f);
+    bool parse_stream(std::istream& in, const std::string& sname, std::ostream& out=std::cout);
+    bool parse_string(const std::string& line, const std::string& sname, std::ostream& out=std::cout);
+    bool parse_file(const std::string& f, std::ostream& out=std::cout);
     
 
     void error (const yy::location& l, const std::string& m);

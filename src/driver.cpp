@@ -21,7 +21,7 @@ lisplike_driver::lisplike_driver()
 lisplike_driver::~lisplike_driver()
     { }
 
-bool lisplike_driver::parse_stream(istream& in, const string& sname)
+bool lisplike_driver::parse_stream(istream& in, const string& sname, std::ostream& out)
 {
     streamname = sname;
     lisplike_scanner scanner(&in);
@@ -33,17 +33,17 @@ bool lisplike_driver::parse_stream(istream& in, const string& sname)
     if(parser.parse() != 0)
         return false;
     // success
-    cout << ast << endl;
+    out << ast << endl;
     return true;
 }
 
-bool lisplike_driver::parse_string(const string& line, const string& sname)
+bool lisplike_driver::parse_string(const string& line, const string& sname, std::ostream& out)
 {
     istringstream iss(line);
     return parse_stream(iss, sname);
 }
 
-bool lisplike_driver::parse_file(const string& filename)
+bool lisplike_driver::parse_file(const string& filename, std::ostream& out)
 {
     ifstream in(filename);
     if(!in.good()) return false;
@@ -73,19 +73,34 @@ void lisplike_driver::error (const string& m)
     cerr << m << endl;
 }
 
-using namespace std;
+static vector<string> filenames;
+static std::string outdir;
+static bool outfile = false;
+static bool genheader = false;
 
-static string filename;
+static void print_usage(int argc, char **argv)
+{
+    cout << "usage: " << argv[0] << " [opts] [input1 [input2 input3 ...]]" << endl;
+    cout << "opts:" << endl <<
+"-p --trace-parsing         traces the Bison parse of the input" << endl <<
+"-s --trace-scanning        traces the Lexx scan of the input" << endl <<
+"-o --outfile               generate an output file for every output" << endl <<
+"-g --gen-header            generate a header file for every output" << endl <<
+"-d --dir [outdir]          directory to save output file to" << endl;
+}
 
-void parse_args(int argc, char **argv, lisplike_driver &driver)
+static void parse_args(int argc, char **argv, lisplike_driver &driver)
 {
     while(1)
     {
         int optindex;
         static struct option long_options[] = {
-            { "trace-parsing",      no_argument,    0, 'p' },
-            { "trace-scanning",     no_argument,    0, 's' },
-            { nullptr,              0,              0,  0  },
+            { "trace-parsing",      no_argument,        0, 'p' },
+            { "trace-scanning",     no_argument,        0, 's' },
+            { "outfile",            no_argument,        0, 'o' },
+            { "gen-header",         no_argument,        0, 'g' },
+            { "dir",                required_argument,  0, 'd' },
+            { nullptr,              0,                  0,  0  },
         };
 
         int c = getopt_long(argc, argv, "sph", long_options, &optindex);
@@ -102,19 +117,29 @@ void parse_args(int argc, char **argv, lisplike_driver &driver)
             case 'p':
                 driver.trace_parsing = true;
                 break;
+            case 'o':
+                outfile = true;
+                break;
+            case 'g':
+                genheader = true;
+                break;
+            case 'd':
+                outdir = argv[optindex];
+                break;
             case '?':
             case 'h':
-                // todo: print usage
+                print_usage(argc, argv);
+                exit(0);
                 break;
             default:
                 break;
         }
     }
     
-    if(optind < argc)
-        filename = argv[optind++];
+    while(optind < argc)
+        filenames.push_back(argv[optind++]);
     for(; optind < argc; optind++)
-        cout << "ignoring input file: " << argv[optind] << endl;
+        cerr << "ignoring input file: " << argv[optind] << endl;
 }
 
 int main(int argc, char **argv)
@@ -122,11 +147,15 @@ int main(int argc, char **argv)
     lisplike_driver driver;
     parse_args(argc, argv, driver);
 
-    if(!filename.empty())
+    if(!filenames.empty())
     {
+        for(auto filename : filenames)
+        {
         if(!driver.parse_file(filename))
-            exit(1);
-        cerr << "OK" << endl;
+            cerr << "ERROR" << endl;
+        else
+            cerr << "OK" << endl;
+        }
         exit(0);
     }
 
