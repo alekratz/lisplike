@@ -119,7 +119,7 @@ int main(int argc, char **argv)
   {
     if(!driver.parse_file(filename))
       exit(1);
-    cout << "OK" << endl;
+    cerr << "OK" << endl;
     exit(0);
   }
 
