@@ -1,7 +1,7 @@
 #include "driver.hpp"
 #include "scanner.hpp"
 #include "parser.hpp"
-#include "ll_type.hpp"
+#include "ast.hpp"
 
 #include <fstream>
 #include <sstream>

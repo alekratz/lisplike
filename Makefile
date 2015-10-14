@@ -8,7 +8,7 @@ BIN=bin
 GEN=gen
 
 # Input files
-CXXFILES=$(SRC)/driver.cpp $(SRC)/lisplike_value.cpp 
+CXXFILES=$(SRC)/driver.cpp $(SRC)/ast.cpp 
 FLEXFILES=$(SRC)/scanner.ll
 BISONFILES=$(SRC)/parser.ypp
 
