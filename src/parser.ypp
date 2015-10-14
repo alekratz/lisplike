@@ -71,7 +71,7 @@ class lisplike_driver;
 
 unit
   : exp unit { 
-    $2.push_back($1);
+    $2.insert($2.begin(), $1);
     $$ = $2;
   }
   | %empty { $$ = ll_line_vec(); }
@@ -106,7 +106,7 @@ let_exp
 
 term_list 
   : term term_list { 
-    $2.push_back($1);
+    $2.insert($2.begin(), $1);
     $$ = $2;
   }
   | %empty { $$ = ll_line_vec(); }
