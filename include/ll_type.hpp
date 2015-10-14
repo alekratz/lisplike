@@ -3,15 +3,16 @@
 
 #include <string>
 #include <vector>
-#include <unordered_map>
+#include <memory>
+//#include <unordered_map>
 #include <sstream>
 #include <cstdint>
 #include <cassert>
+#include "util.hpp"
 
-enum class lisplike_type
+enum class ll_type
 {
   str,
-//  int64,
   real,
   list,
   dict,
@@ -19,77 +20,117 @@ enum class lisplike_type
 };
 
 
-/*
- * TODO : maybe rename this to lisplike_term? or ll_term?
+/**
+ * @brief ll_line class
  */
-
-class lisplike_value
+class ll_line
 {
 public:
 
-  lisplike_value()
-    : str_value()
-    , real_value(0.0)
-    , list_value()
-    , type(lisplike_type::none)
-  {
-
-  }
-
-  lisplike_value(const std::string& val)
-    : str_value(val)
-    , type(lisplike_type::str)
-  { }
-  
-  lisplike_value(const char *val)
-    : str_value(val)
-    , type(lisplike_type::str)
-  { }
-
-  lisplike_value(const std::vector<lisplike_value>& val)
-    : list_value(val)
-    , type(lisplike_type::list)
-  { }
-
-/*
-  lisplike_value(int64_t val)
-    : value{ .i = val}
-    , type(lisplike_type::int64)
-  { }
-*/
-
-  lisplike_value(double val)
-    : real_value(val)
-    , type(lisplike_type::real)
-  { }
+  ll_line() = default;
+  virtual ~ll_line() = default;
 
   /* operations */
 public:
-  std::string genlet(const std::string& identifier);
-
-  /* properties */
-public:
-  template<typename T>
-  T get_value() const;
-  template<typename T>
-  void set_value(T value);
-  template<typename T>
-  void operator=(T value) { set_value<T>(value); }
-
-  lisplike_type get_type() const
-  {
-    return type;
-  }
-
-private:
-  std::string str_value;
-  double real_value;
-  std::vector<lisplike_value> list_value;
-  lisplike_type type;
+  virtual std::string gencode() = 0;
 };
 
+typedef std::shared_ptr<ll_line> ll_line_p;
+typedef std::vector<ll_line_p> ll_line_vec;
+
+class ll_none :
+  public ll_line
+{
+public:
+  ll_none() = default;
+  virtual ~ll_none() = default;
+public:
+  virtual std::string gencode() { return "None"; };
+};
+
+class ll_value :
+  public ll_line
+{
+public:
+  ll_value(double val) 
+    : real_val(val)
+    , type(ll_type::real) { }
+  ll_value(cstref val)
+    : str_val(val)
+    , type(ll_type::str) { }
+  ll_value(const char *val)
+    : str_val(val)
+    , type(ll_type::str) { }
+  ll_value(const ll_line_vec& val)
+    : list_val(val)
+    , type(ll_type::list) { }
+
+  virtual ~ll_value() = default;
+public:
+  virtual std::string gencode();
+
+private:
+  double real_val;
+  std::string str_val;
+  ll_line_vec list_val;
+  ll_type type;
+};
+
+class ll_fundecl :
+  public ll_line
+{
+public:
+  ll_fundecl(cstref identifier, const ll_line_vec& lines)
+    : identifier(identifier)
+    , lines(lines) { }
+
+  virtual std::string gencode();
+
+private:
+  std::string identifier;
+  std::vector<ll_line_p> lines;
+};
+
+class ll_funcall :
+  public ll_line
+{
+public:
+  ll_funcall(cstref identifier, const ll_line_vec& params)
+  : identifier(identifier)
+  , params(params) { }
+
+public:
+  virtual std::string gencode();
+
+private:
+  std::string identifier;
+  ll_line_vec params;
+};
+
+/*
+ * TODO : maybe rename this to lisplike_term? or ll_term?
+ * TODO : maybe make this a ll_line class that records functions, function calls, and function declarations?
+ */
+
+class ll_let
+  : public ll_line
+{
+public:
+  ll_let(const std::string& identifier, ll_line_p value)
+    : identifier(identifier)
+    , value(value) { }
+
+public:
+  virtual std::string gencode();
+
+private:
+  std::string identifier;
+  ll_line_p value;
+};
+
+
 /* ostream definitions */
-std::ostream& operator<<(std::ostream& os, const lisplike_value& ll_val);
-std::ostream& operator<<(std::ostream& os, const std::vector<lisplike_value>& ll_vals);
+std::ostream& operator<<(std::ostream& os, const ll_line_p& ll_val);
+std::ostream& operator<<(std::ostream& os, const ll_line_vec& ll_vals);
 
 #endif /* LL_TYPE_HPP */
