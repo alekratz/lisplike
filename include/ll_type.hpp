@@ -68,6 +68,7 @@ public:
   virtual ~ll_value() = default;
 public:
   virtual std::string gencode();
+  ll_type get_type() { return type; }
 
 private:
   double real_val;
@@ -80,15 +81,20 @@ class ll_fundecl :
   public ll_line
 {
 public:
-  ll_fundecl(cstref identifier, const ll_line_vec& lines)
+  ll_fundecl(cstref identifier, ll_line_p args, const ll_line_vec& lines)
     : identifier(identifier)
-    , lines(lines) { }
+    , args(args)
+    , lines(lines)
+  {
+    assert(dynamic_cast<ll_value*>(args.get())->get_type() == ll_type::list && "args must be a list");
+  }
 
   virtual std::string gencode();
 
 private:
   std::string identifier;
-  std::vector<ll_line_p> lines;
+  ll_line_p args;
+  ll_line_vec lines;
 };
 
 class ll_funcall :

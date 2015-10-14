@@ -6,7 +6,13 @@ using namespace std;
 
 string ll_fundecl::gencode()
 {
-  return "";
+  string linestr = "";
+  for(auto line : lines)
+  {
+    if(line != nullptr)
+      linestr += line->gencode() + "\n";
+  }
+  return linestr;
 }
 
 string ll_funcall::gencode()
