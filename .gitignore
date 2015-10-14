@@ -3,6 +3,7 @@ lisplike
 bin/*
 gen/*
 *.d
+lisplike.sublime-*
 
 # Created by https://www.gitignore.io/api/c++,linux
 
