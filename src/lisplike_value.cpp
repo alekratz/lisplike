@@ -1,97 +1,52 @@
 #include "ll_type.hpp"
 #include "format.hpp"
+#include <string>
 
 using namespace std;
 
-/* getters */
-template<>
-double lisplike_value::get_value() const { return real_value; }
-template<>
-const string& lisplike_value::get_value() const { return str_value; }
-template<>
-const vector<lisplike_value> lisplike_value::get_value() const { return list_value; }
-
-template<>
-void lisplike_value::set_value(const string& value)
+string ll_fundecl::gencode()
 {
-  type = lisplike_type::str;
-  str_value = value;
+  return "";
 }
 
-/*
- * Warning: don't use this when you're doing regular coding - attempt to use
- * the const string& instead - this prevents unnecessary copying.
- */
-template<>
-void lisplike_value::set_value(string value)
+string ll_funcall::gencode()
 {
-  type = lisplike_type::str;
-  str_value = value;
+  return "";
 }
 
-template<>
-void lisplike_value::set_value(double value)
-{
-  type = lisplike_type::real;
-  real_value = value;
-}
-
-template<>
-void lisplike_value::set_value(const vector<lisplike_value>& list)
-{
-  type = lisplike_type::list;
-  list_value = list;
-}
-
-template<>
-void lisplike_value::set_value(vector<lisplike_value> list)
-{
-  type = lisplike_type::list;
-  list_value = list;
-}
-
-std::string lisplike_value::genlet(const string& identifier)
+string ll_value::gencode()
 {
   switch(type)
   {
-    case lisplike_type::str:
-      return format("lisplike_value % = %;", identifier, str_value);
-    case lisplike_type::real:
-      return format("lisplike_value % = %;", identifier, real_value);
-    case lisplike_type::list:
-      return format("lisplike_value % = { % }", identifier, list_value);
-    case lisplike_type::none:
-      return format("lisplike_value %;", identifier);
+    case ll_type::str:
+      return str_val;
+    case ll_type::real:
+      return format("%", real_val);
+    case ll_type::dict:
+      assert(false && "unreachable");
+      break;
+    case ll_type::list:
+      return format("%", list_val);
+    case ll_type::none:
+      return "None";
   }
-  return " ;; ";
+  return "";
 }
 
-ostream& operator<<(ostream& os, const lisplike_value& ll_val)
+string ll_let::gencode()
 {
-  switch(ll_val.get_type())
-  {
-    case lisplike_type::str:
-      os << ll_val.get_value<const string&>();
-      break;
-    case lisplike_type::real:
-      os << ll_val.get_value<double>();
-      break;
-    case lisplike_type::list:
-      os << ll_val;
-      break;
-    case lisplike_type::dict:
-      assert(false && "Unreachable code reached");
-      break;
-    case lisplike_type::none:
-      os << "None";
-      break;
-  }
+  return format("ll_value % = %;", identifier, value->gencode());
+}
+
+ostream& operator<<(ostream& os, const ll_line_p& ll_line)
+{
+  os << ll_line->gencode();
   return os;
 }
 
-ostream& operator<<(ostream& os, const vector<lisplike_value>& ll_vals)
+ostream& operator<<(ostream& os, const ll_line_vec& ll_vals)
 {
   for(auto ll : ll_vals)
-    os << ll << " ";
+    os << ll->gencode() << " ";
   return os;
 }
