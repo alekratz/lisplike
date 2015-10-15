@@ -53,6 +53,15 @@ string ll_math_exp::gencode()
     return math_exp;
 }
 
+string ll_inc_exp::gencode()
+{
+    /* 
+    in clang 3.7, this segfaults the compiler. It just has the removed "int" declaration. Not sure why.
+    return format("#include \"%.hpp\"", trim(path, [](i){ return i == '"'; }));
+    */
+    return format("#include \"%.hpp\"", trim(path, [](int i){ return i == '"'; }));
+}
+
 string ll_term::gencode()
 {
     switch(type)

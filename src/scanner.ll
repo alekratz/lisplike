@@ -23,6 +23,7 @@
 fun_keyw    fun
 let_keyw    let
 if_keyw     if
+inc_keyw    inc
 
 /* symbols */
 lparen        \(
@@ -57,6 +58,7 @@ loc.step();
 {fun_keyw}      return yy::lisplike_parser::make_FUN_KEYW(loc);
 {let_keyw}      return yy::lisplike_parser::make_LET_KEYW(loc);
 {if_keyw}       return yy::lisplike_parser::make_IF_KEYW(loc);
+{inc_keyw}      return yy::lisplike_parser::make_INC_KEYW(loc);
 {string}        return yy::lisplike_parser::make_STRING(yytext, loc);
 {ident}         return yy::lisplike_parser::make_IDENTIFIER(yytext, loc);
 {cond_sym}      return yy::lisplike_parser::make_COND_SYM(yytext, loc);

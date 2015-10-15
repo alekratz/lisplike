@@ -47,6 +47,7 @@ class lisplike_driver;
     FUN_KEYW    "fun"
     LET_KEYW    "let"
     IF_KEYW     "if"
+    INC_KEYW    "inc"
 ;
 %token <std::string> IDENTIFIER "identifier"
 %token <long double> NUMBER     "number"
@@ -62,6 +63,7 @@ class lisplike_driver;
 %type <ll_if_exp_p> if_exp
 %type <ll_bool_exp_p> bool_exp
 %type <ll_math_exp_p> math_exp
+%type <ll_inc_exp_p> inc_exp
 %type <ll_children> term_list
 %type <ll_term_p> term
 %type <ll_children> list
@@ -88,6 +90,7 @@ exp
     | if_exp        { $$ = $1; }
     | bool_exp      { $$ = $1; }
     | math_exp      { $$ = $1; }
+    | inc_exp       { $$ = $1; }
     ;
 
 funcall_exp
@@ -125,6 +128,11 @@ math_exp
         if($3.size() < 2)
             driver.error(driver.lexer->loc, "math expression requires at least two arguments");
         $$ = std::make_shared<ll_math_exp>(ll_math_exp($2, $3));
+    }
+
+inc_exp
+    : LPAREN INC_KEYW STRING RPAREN {
+        $$ = std::make_shared<ll_inc_exp>(ll_inc_exp($3));
     }
 
 term_list 
