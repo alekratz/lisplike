@@ -6,7 +6,7 @@ Because, you know, you wanted another LISP-like language, right???
 
 Requires
 =
-C++14, Flex, Bison 3.0.4
+C++14, Flex, Bison 3.0.4, Boost Filesystem
 
 HTML generation requires xsltproc.
 
@@ -26,6 +26,7 @@ There are a number of things that need to be done. Here is a list of the stuff:
 * Obligatory support for Window$. I don't have immediate access to a Windows box, so I can't verify anything I'm writing is correct.
 * Moving over to some autobuild system. If we want Windows support, it will likely have to be CMake.
 * Move the code generation to a more friendly design pattern, rather than being hard-coded to C++.
+* Syntactic analysis before generating the C++ code. Catch things like re-declarations, immutable assignment, invalid operands (lexer doesn't catch invalid boolean operators), etc.
 
 License
 =
