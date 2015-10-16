@@ -18,6 +18,26 @@ public:
 
 public:
     virtual std::string gencode() = 0;
+    virtual bool header_needs() { return false; }
+    virtual bool main_needs() { return false; }
+};
+
+class ll_header
+{
+public:
+    ll_header() = default;
+    virtual ~ll_header() = default;
+
+    virtual std::string genheader() = 0;
+};
+
+class ll_main
+{
+public:
+    ll_main() = default;
+    virtual ~ll_main() = default;
+
+    virtual std::string genmain() = 0;
 };
 
 std::ostream& operator<<(std::ostream& os, const ll_tree_p& tree);

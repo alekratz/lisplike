@@ -7,7 +7,7 @@ class ll_let_exp;
 typedef std::shared_ptr<ll_let_exp> ll_let_exp_p;
 
 class ll_let_exp
-    : public ll_tree
+    : public ll_tree, public ll_header
 {
 public:
     ll_let_exp(cstref identifier, ll_term_p term)
@@ -17,10 +17,14 @@ public:
 
 public:
     virtual std::string gencode();
+    virtual bool header_needs() { return true; }
 
 public:
     std::string identifier;
     ll_term_p term;
+
+public:
+    virtual std::string genheader();
 };
 
 #endif

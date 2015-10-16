@@ -2,14 +2,18 @@
 #include "scanner.hpp"
 #include "parser.hpp"
 #include "ast.hpp"
+#include "codegen.hpp"
 
-#include <fstream>
 #include <sstream>
 #include <vector>
 #include <cstdlib>
 #include <getopt.h>
+#include <fstream>
+#include <functional>
+#include <boost/filesystem.hpp>
 
 using namespace std;
+using boost::filesystem::path;
 
 lisplike_driver::lisplike_driver()
     : trace_scanning(false)
@@ -74,9 +78,10 @@ void lisplike_driver::error (const string& m)
 }
 
 static vector<string> filenames;
-static std::string outdir;
+static path outdir = ".";
 static bool outfile = false;
 static bool genheader = false;
+static bool genmain = false;
 
 static void print_usage(int argc, char **argv)
 {
@@ -86,6 +91,9 @@ static void print_usage(int argc, char **argv)
 "-s --trace-scanning        traces the Lexx scan of the input" << endl <<
 "-o --outfile               generate an output file for every output" << endl <<
 "-g --gen-header            generate a header file for every output" << endl <<
+"-m --gen-main              generate a main file, containing every top level " << endl <<
+"                               function call, in order of the files passed to " << endl <<
+"                               the command line." << endl <<
 "-d --dir [outdir]          directory to save output file to" << endl;
 }
 
@@ -95,22 +103,20 @@ static void parse_args(int argc, char **argv, lisplike_driver &driver)
     {
         int optindex;
         static struct option long_options[] = {
-            { "trace-parsing",      no_argument,        0, 'p' },
-            { "trace-scanning",     no_argument,        0, 's' },
-            { "outfile",            no_argument,        0, 'o' },
-            { "gen-header",         no_argument,        0, 'g' },
-            { "dir",                required_argument,  0, 'd' },
-            { nullptr,              0,                  0,  0  },
+            { "trace-parsing",      no_argument,        0,  'p' },
+            { "trace-scanning",     no_argument,        0,  's' },
+            { "outfile",            no_argument,        0,  'o' },
+            { "gen-header",         no_argument,        0,  'g' },
+            { "gen-main",           no_argument,        0,  'm' },
+            { "dir",                required_argument,  0,  'd' },
+            { nullptr,              0,                  0,   0  },
         };
 
-        int c = getopt_long(argc, argv, "sph", long_options, &optindex);
+        int c = getopt_long(argc, argv, "sphogmd:", long_options, &optindex);
         if(c == -1)
             break;
         switch(c)
         {
-            case 0:
-                cout << long_options[optindex].name << endl;;
-                break;
             case 's':
                 driver.trace_scanning = true;
                 break;
@@ -123,8 +129,11 @@ static void parse_args(int argc, char **argv, lisplike_driver &driver)
             case 'g':
                 genheader = true;
                 break;
+            case 'm':
+                genmain = true;
+                break;
             case 'd':
-                outdir = argv[optindex];
+                outdir = path(optarg);
                 break;
             case '?':
             case 'h':
@@ -142,6 +151,19 @@ static void parse_args(int argc, char **argv, lisplike_driver &driver)
         cerr << "ignoring input file: " << argv[optind] << endl;
 }
 
+static void do_codegen(function<string(const ll_children&)> codegen_fn, 
+    const ll_children& ast, cstref filename)
+{
+    path outpath = outdir / (path(filename).filename());
+    ofstream out_stream(outpath.string());
+    if(!out_stream.good())
+    {
+        cerr << "could not open " << outpath << endl;
+        exit(1);
+    }
+    out_stream << codegen_fn(ast);
+}
+
 int main(int argc, char **argv)
 {
     lisplike_driver driver;
@@ -149,13 +171,24 @@ int main(int argc, char **argv)
 
     if(!filenames.empty())
     {
+        ll_children ast;
         for(auto filename : filenames)
         {
-        if(!driver.parse_file(filename))
-            cerr << "ERROR" << endl;
-        else
-            cerr << "OK" << endl;
+            if(!driver.parse_file(filename))
+                cerr << "ERROR" << endl;
+            else
+            {
+                ast.insert(ast.end(), driver.ast.begin(), driver.ast.end());
+                if(outfile)
+                    do_codegen(gen_cpp, driver.ast, filename + ".cpp");
+                if(genheader)
+                    do_codegen(gen_header, driver.ast, filename + ".hpp");
+                cerr << "OK" << endl;
+            }
         }
+
+        if(genmain)
+            do_codegen(gen_main, ast, "main.cpp");
         exit(0);
     }
 

@@ -8,7 +8,7 @@ BIN=bin
 GEN=gen
 
 # Input files
-CXXFILES=$(SRC)/driver.cpp $(SRC)/ast.cpp  $(SRC)/util.cpp
+CXXFILES=$(SRC)/driver.cpp $(SRC)/ast.cpp  $(SRC)/util.cpp $(SRC)/codegen.cpp
 FLEXFILES=$(SRC)/scanner.ll
 BISONFILES=$(SRC)/parser.ypp
 
@@ -23,8 +23,8 @@ OFILES=$(CXXFILES:$(SRC)/%.cpp=$(BIN)/%.o) \
 	$(BISON_TARGET:$(GEN)/%.cpp=$(BIN)/%.o)
 DEPFILES=$(OFILES:%.o=%.d)
 
-CXXFLAGS=-c -g -O2 -std=c++14 -I$(GEN) -I$(GEN)/include -Iinclude -MP -MMD -Wall
-LDFLAGS=-g
+CXXFLAGS=-c -g -O0 -std=c++14 -I$(GEN) -I$(GEN)/include -Iinclude -MP -MMD -Wall
+LDFLAGS=-g -lboost_system -lboost_filesystem
 LFLAGS=-+ --header
 BISONFLAGS=--defines=$(GEN)/include/parser.hpp
 

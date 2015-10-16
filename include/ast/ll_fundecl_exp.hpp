@@ -9,7 +9,7 @@ class ll_fundecl_exp;
 typedef std::shared_ptr<ll_fundecl_exp> ll_fundecl_exp_p;
 
 class ll_fundecl_exp
-    : public ll_tree
+    : public ll_tree, public ll_header
 {
 public:
     ll_fundecl_exp(cstref identifier, ll_children params, ll_children term_list)
@@ -20,6 +20,7 @@ public:
 
 public:
     virtual std::string gencode();
+    virtual std::string genheader();
 
 public:
     std::string identifier;
