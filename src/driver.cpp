@@ -58,9 +58,9 @@ void lisplike_driver::error (const string& m)
 
 static vector<string> filenames;
 static path outdir = ".";
-static bool outfile = false;
-static bool genheader = false;
-static bool genmain = false;
+static bool outfile = true;
+static bool genheader = true;
+static bool genmain = true;
 
 static void print_usage(int argc, char **argv)
 {
@@ -68,12 +68,11 @@ static void print_usage(int argc, char **argv)
     cout << "opts:" << endl <<
 "-p --trace-parsing         traces the Bison parse of the input" << endl <<
 "-s --trace-scanning        traces the Lexx scan of the input" << endl <<
-"-o --outfile               generate an output file for every output" << endl <<
-"-g --gen-header            generate a header file for every output" << endl <<
-"-m --gen-main              generate a main file, containing every top level " << endl <<
-"                               function call, in order of the files passed to " << endl <<
-"                               the command line." << endl <<
-"-d --dir [outdir]          directory to save output file to" << endl;
+"-o --no-outfile            don't generate an output file" << endl <<
+"-h --no-header             don't generate a header file" << endl <<
+"-m --no-main               don't generate a main file" << endl <<
+"-d --dir [outdir]          directory to save output file to" << endl <<
+"-? --help                  shows this help message" << endl;
 }
 
 static void parse_args(int argc, char **argv, lisplike_driver &driver)
@@ -85,9 +84,10 @@ static void parse_args(int argc, char **argv, lisplike_driver &driver)
             { "trace-parsing",      no_argument,        0,  'p' },
             { "trace-scanning",     no_argument,        0,  's' },
             { "outfile",            no_argument,        0,  'o' },
-            { "gen-header",         no_argument,        0,  'g' },
+            { "gen-header",         no_argument,        0,  'h' },
             { "gen-main",           no_argument,        0,  'm' },
             { "dir",                required_argument,  0,  'd' },
+            { "help",               required_argument,  0,  '?' },
             { nullptr,              0,                  0,   0  },
         };
 
@@ -103,19 +103,18 @@ static void parse_args(int argc, char **argv, lisplike_driver &driver)
                 driver.trace_parsing = true;
                 break;
             case 'o':
-                outfile = true;
+                outfile = false;
                 break;
-            case 'g':
-                genheader = true;
+            case 'h':
+                genheader = false;
                 break;
             case 'm':
-                genmain = true;
+                genmain = false;
                 break;
             case 'd':
                 outdir = path(optarg);
                 break;
             case '?':
-            case 'h':
                 print_usage(argc, argv);
                 exit(0);
                 break;
@@ -130,7 +129,7 @@ static void parse_args(int argc, char **argv, lisplike_driver &driver)
         cerr << "ignoring input file: " << argv[optind] << endl;
 }
 
-static void do_codegen(function<string(const ll_children&)> codegen_fn, 
+static int do_codegen(function<string(const ll_children&)> codegen_fn, 
     const ll_children& ast, cstref filename)
 {
     path outpath = outdir / (path(filename).filename());
@@ -138,13 +137,15 @@ static void do_codegen(function<string(const ll_children&)> codegen_fn,
     if(!out_stream.good())
     {
         cerr << "could not open " << outpath << endl;
-        exit(1);
+        return 1;
     }
     out_stream << codegen_fn(ast);
+    return 0;
 }
 
 int main(int argc, char **argv)
 {
+    int mainresult = 0;
     lisplike_driver driver;
     parse_args(argc, argv, driver);
 
@@ -155,21 +156,23 @@ int main(int argc, char **argv)
         {
             if(!driver.parse_file(filename))
             {
-                cerr << "ERROR" << endl;
+                cerr << "error in " << filename << endl;
                 exit(1);
             }
             else
             {
                 ast.insert(ast.end(), driver.ast.begin(), driver.ast.end());
                 if(outfile)
-                    do_codegen(gen_cpp, driver.ast, filename + ".cpp");
+                    mainresult |= do_codegen(gen_cpp, driver.ast, filename + ".cpp");
                 if(genheader)
-                    do_codegen(gen_header, driver.ast, filename + ".hpp");
+                    mainresult |= do_codegen(gen_header, driver.ast, filename + ".hpp");
             }
         }
         if(genmain)
-            do_codegen(gen_main, ast, "main.cpp");
-        cerr << "OK" << endl;
+            mainresult |= do_codegen(gen_main, ast, "main.cpp");
+        
+        if(mainresult == 0)
+            cerr << "OK" << endl;
     }
     else
     {
@@ -181,5 +184,5 @@ int main(int argc, char **argv)
                 cout << "OK" << endl;
         }
     }
-    return 0;
+    return mainresult;
 }
