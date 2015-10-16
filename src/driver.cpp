@@ -136,7 +136,7 @@ static void parse_args(int argc, char **argv, lisplike_driver &driver)
 }
 
 static int do_codegen(function<string(const ll_children&)> codegen_fn, 
-    const ll_children& ast, cstref filename)
+    const ll_children& ast, const path& filename)
 {
     path outpath = outdir / (path(filename).filename());
     ofstream out_stream(outpath.string());
@@ -165,9 +165,9 @@ int main(int argc, char **argv)
             return 1;
         }
 
-        for(auto filename : filenames)
+        for(path filename : filenames)
         {
-            if(!driver.parse_file(filename))
+            if(!driver.parse_file(filename.string()))
             {
                 cerr << "error in " << filename << endl;
                 return 1;
@@ -176,13 +176,13 @@ int main(int argc, char **argv)
             {
                 ast.insert(ast.end(), driver.ast.begin(), driver.ast.end());
                 if(outfile)
-                    mainresult |= do_codegen(gen_cpp, driver.ast, filename + ".cpp");
+                    mainresult |= do_codegen(gen_cpp, driver.ast, filename.replace_extension(".cpp"));
                 if(genheader)
-                    mainresult |= do_codegen(gen_header, driver.ast, filename + ".hpp");
+                    mainresult |= do_codegen(gen_header, driver.ast, filename.replace_extension(".hpp"));
             }
         }
         if(genmain)
-            mainresult |= do_codegen(gen_main, ast, "main.cpp");
+            mainresult |= do_codegen(gen_main, ast, path("main.cpp"));
 
         if(mainresult == 0)
             cerr << "OK" << endl;
