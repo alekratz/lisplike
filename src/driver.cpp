@@ -17,10 +17,7 @@ using boost::filesystem::path;
 
 lisplike_driver::lisplike_driver()
     : trace_scanning(false)
-    , trace_parsing(false)
-{
-
-}
+    , trace_parsing(false) { }
 
 lisplike_driver::~lisplike_driver()
     { }
@@ -33,12 +30,7 @@ bool lisplike_driver::parse_stream(istream& in, const string& sname, std::ostrea
     lexer = &scanner;
     yy::lisplike_parser parser(*this);
     parser.set_debug_level(trace_parsing);
-    // failure
-    if(parser.parse() != 0)
-        return false;
-    // success
-    out << ast << endl;
-    return true;
+    return parser.parse() == 0;
 }
 
 bool lisplike_driver::parse_string(const string& line, const string& sname, std::ostream& out)
@@ -53,19 +45,6 @@ bool lisplike_driver::parse_file(const string& filename, std::ostream& out)
     if(!in.good()) return false;
     return parse_stream(in, filename);
 }
-
-/*
-int lisplike_driver::parse(const string& f)
-{
-    file = f;
-    scan_begin();
-    yy::lisplike_parser parser(*this);
-    parser.set_debug_level(trace_parsing);
-    int res = parser.parse();
-    scan_end();
-    return res;
-}
-*/
 
 void lisplike_driver::error (const yy::location& l, const string& m)
 {
@@ -175,7 +154,10 @@ int main(int argc, char **argv)
         for(auto filename : filenames)
         {
             if(!driver.parse_file(filename))
+            {
                 cerr << "ERROR" << endl;
+                exit(1);
+            }
             else
             {
                 ast.insert(ast.end(), driver.ast.begin(), driver.ast.end());
@@ -183,21 +165,21 @@ int main(int argc, char **argv)
                     do_codegen(gen_cpp, driver.ast, filename + ".cpp");
                 if(genheader)
                     do_codegen(gen_header, driver.ast, filename + ".hpp");
-                cerr << "OK" << endl;
             }
         }
-
         if(genmain)
             do_codegen(gen_main, ast, "main.cpp");
-        exit(0);
+        cerr << "OK" << endl;
     }
-
-    string line;
-    
-    while(getline(cin, line))
+    else
     {
-        bool result = driver.parse_string(line, "stdin");
-        if(result)
-            cout << "OK" << endl;
+        string line;
+        while(getline(cin, line))
+        {
+            bool result = driver.parse_string(line, "stdin");
+            if(result)
+                cout << "OK" << endl;
+        }
     }
+    return 0;
 }
