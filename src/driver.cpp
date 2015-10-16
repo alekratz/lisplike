@@ -58,6 +58,7 @@ void lisplike_driver::error (const string& m)
 
 static vector<string> filenames;
 static path outdir = ".";
+bool verbose = false;
 static bool outfile = true;
 static bool genheader = true;
 static bool genmain = true;
@@ -66,13 +67,14 @@ static void print_usage(int argc, char **argv)
 {
     cout << "usage: " << argv[0] << " [opts] [input1 [input2 input3 ...]]" << endl;
     cout << "opts:" << endl <<
-"-p --trace-parsing         traces the Bison parse of the input" << endl <<
-"-s --trace-scanning        traces the Lexx scan of the input" << endl <<
-"-o --no-outfile            don't generate an output file" << endl <<
-"-h --no-header             don't generate a header file" << endl <<
-"-m --no-main               don't generate a main file" << endl <<
-"-d --dir [outdir]          directory to save output file to" << endl <<
-"-? --help                  shows this help message" << endl;
+    "-p --trace-parsing         traces the Bison parse of the input" << endl <<
+    "-s --trace-scanning        traces the Lexx scan of the input" << endl <<
+    "-o --no-outfile            don't generate an output file" << endl <<
+    "-h --no-header             don't generate a header file" << endl <<
+    "-m --no-main               don't generate a main file" << endl <<
+    "-d --dir [outdir]          directory to save output file to" << endl <<
+    "-v --verbose               verbose output" << endl <<
+    "-? --help                  shows this help message" << endl;
 }
 
 static void parse_args(int argc, char **argv, lisplike_driver &driver)
@@ -87,11 +89,12 @@ static void parse_args(int argc, char **argv, lisplike_driver &driver)
             { "gen-header",         no_argument,        0,  'h' },
             { "gen-main",           no_argument,        0,  'm' },
             { "dir",                required_argument,  0,  'd' },
+            { "verbose",            no_argument,        0,  'v' },
             { "help",               required_argument,  0,  '?' },
             { nullptr,              0,                  0,   0  },
         };
 
-        int c = getopt_long(argc, argv, "sphogmd:", long_options, &optindex);
+        int c = getopt_long(argc, argv, "sphogmd:v", long_options, &optindex);
         if(c == -1)
             break;
         switch(c)
@@ -113,6 +116,9 @@ static void parse_args(int argc, char **argv, lisplike_driver &driver)
                 break;
             case 'd':
                 outdir = path(optarg);
+                break;
+            case 'v':
+                verbose = true;
                 break;
             case '?':
                 print_usage(argc, argv);
@@ -139,6 +145,7 @@ static int do_codegen(function<string(const ll_children&)> codegen_fn,
         cerr << "could not open " << outpath << endl;
         return 1;
     }
+    VCERR << "generating " << outpath.string() << endl;
     out_stream << codegen_fn(ast);
     return 0;
 }
@@ -152,12 +159,18 @@ int main(int argc, char **argv)
     if(!filenames.empty())
     {
         ll_children ast;
+        if(!create_directory_tree(outdir))
+        {
+            cerr << "could not create directory tree " << outdir << endl;
+            return 1;
+        }
+
         for(auto filename : filenames)
         {
             if(!driver.parse_file(filename))
             {
                 cerr << "error in " << filename << endl;
-                exit(1);
+                return 1;
             }
             else
             {
@@ -170,7 +183,7 @@ int main(int argc, char **argv)
         }
         if(genmain)
             mainresult |= do_codegen(gen_main, ast, "main.cpp");
-        
+
         if(mainresult == 0)
             cerr << "OK" << endl;
     }

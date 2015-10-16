@@ -6,6 +6,10 @@
 #include <iostream>
 #include "parser.hpp"
 
+extern bool verbose;
+/* Verbose CERR */
+#define VCERR if(verbose) std::cerr
+
 class lisplike_scanner;
 
 class lisplike_driver

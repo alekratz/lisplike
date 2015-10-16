@@ -6,12 +6,14 @@
 #include <algorithm> 
 #include <functional>
 #include <cctype>
+#include <boost/filesystem.hpp>
 
 typedef const std::string& cstref;
 
 #include "ast.hpp"
 
 std::string pad_internal(const ll_children& terms, cstref inner);
+bool create_directory_tree(const boost::filesystem::path& path);
 
 // Character predicate type
 typedef std::function<int(int)> char_pred_t;
