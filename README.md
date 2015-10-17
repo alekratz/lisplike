@@ -21,12 +21,14 @@ Roadmap
 There are a number of things that need to be done. Here is a list of the stuff:
 * Build tools that allow us to type something along the lines of `llbuild file1.ll file2.ll file3.ll`, and result in the C++ compiler being called (with appropriate flags) and a binary to be generated.
 	* This will likely be a bash/shell script.
-* Imports, indicating where to import something from. This is an analogue to the C++ #include. Headers are covered in the next bullet point.
-* Header generation. This either need to happen (a) by default or (b) by adding an option for it to be generated at compile-time.
+* ~~Imports, indicating where to import something from. This is an analogue to the C++ #include. Headers are covered in the next bullet point.~~ COMPLETE
+* ~~Header generation. This either need to happen (a) by default or (b) by adding an option for it to be generated at compile-time.~~ (mostly) COMPLETE
 * Obligatory support for Window$. I don't have immediate access to a Windows box, so I can't verify anything I'm writing is correct.
 * Moving over to some autobuild system. If we want Windows support, it will likely have to be CMake.
 * Move the code generation to a more friendly design pattern, rather than being hard-coded to C++.
 * Syntactic analysis before generating the C++ code. Catch things like re-declarations, immutable assignment, invalid operands (lexer doesn't catch invalid boolean operators), etc.
+* Better examples (i.e. more than just a factorial)
+* Class/struct generation?
 
 License
 =
