@@ -53,7 +53,7 @@ string ll_math_exp::gencode()
     return math_exp;
 }
 
-string ll_inc_exp::gencode()
+string ll_inc::gencode()
 {
     /* 
     in clang 3.7, this segfaults the compiler. It just has the removed "int" declaration. Not sure why.
@@ -97,5 +97,12 @@ ostream& operator<<(ostream& os, const ll_children& children)
 {
     for(auto ll : children)
         os << ll->gencode() << "\n";
+    return os;
+}
+
+ostream& operator<<(ostream& os, const ll_inc_list& includes)
+{
+    for(auto inc : includes)
+        os << inc->gencode() << "\n";
     return os;
 }

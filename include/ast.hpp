@@ -9,7 +9,7 @@
 #include "ast/ll_if_exp.hpp"
 #include "ast/ll_bool_exp.hpp"
 #include "ast/ll_math_exp.hpp"
-#include "ast/ll_inc_exp.hpp"
+#include "ast/ll_inc.hpp"
 #include "ast/ll_term.hpp"
 
 #endif /* AST_HPP */

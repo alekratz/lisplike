@@ -17,12 +17,14 @@ string ll_fundecl_exp::genheader()
     return format("extern ll_value %(ll_value %);", identifier, params);
 }
 
-string gen_header(const ll_children& tree)
+string gen_header(const lisplike_driver& driver)
 {
     stringstream result;
     // TODO: include guard
+    for(auto inc : driver.includes)
+        result << inc->gencode() << endl;
     // Declare header decls
-    for(auto ll_child : tree)
+    for(auto ll_child : driver.ast)
     {
         // does our header need this child in the AST?
         if(ll_child->header_needs())
@@ -32,10 +34,14 @@ string gen_header(const ll_children& tree)
     return result.str();
 }
 
-string gen_cpp(const ll_children& tree)
+string gen_cpp(const lisplike_driver& driver)
 {
     stringstream result;
-    for(auto ll_child : tree)
+
+    for(auto inc : driver.includes)
+        result << inc->gencode() << endl;
+
+    for(auto ll_child : driver.ast)
     {
         if(!ll_child->main_needs())
             result << ll_child->gencode() << endl;
@@ -43,20 +49,17 @@ string gen_cpp(const ll_children& tree)
     return result.str();
 }
 
-string gen_main(const ll_children& tree)
+string gen_main(const lisplike_driver& driver)
 {
     stringstream result;
 
-    // Create a set of all of the includes, and include them in the main
-    for(auto ll_child : tree)
-    {
-        ll_inc_exp_p inc = dynamic_pointer_cast<ll_inc_exp>(ll_child);
-        if(inc != nullptr)
-            result << inc->gencode() << endl;
-    }
+    // Append the includes to the top of the main function
+    for(auto inc : driver.includes)
+        result << inc->gencode() << endl;
 
+    // Create the main function
     result << "int main(int argc, char **argv) {" << endl;
-    for(auto ll_child : tree)
+    for(auto ll_child : driver.ast)
     {
         if(ll_child->main_needs())
             result << dynamic_pointer_cast<ll_main>(ll_child)->genmain() << ';' << endl;

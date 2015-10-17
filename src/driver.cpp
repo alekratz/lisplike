@@ -135,8 +135,8 @@ static void parse_args(int argc, char **argv, lisplike_driver &driver)
         cerr << "ignoring input file: " << argv[optind] << endl;
 }
 
-static int do_codegen(function<string(const ll_children&)> codegen_fn, 
-    const ll_children& ast, const path& filename)
+static int do_codegen(function<string(const lisplike_driver&)> codegen_fn, 
+    const lisplike_driver& driver, const path& filename)
 {
     path outpath = outdir / (path(filename).filename());
     ofstream out_stream(outpath.string());
@@ -146,7 +146,7 @@ static int do_codegen(function<string(const ll_children&)> codegen_fn,
         return 1;
     }
     VCERR << "generating " << outpath.string() << endl;
-    out_stream << codegen_fn(ast);
+    out_stream << codegen_fn(driver);
     return 0;
 }
 
@@ -159,6 +159,7 @@ int main(int argc, char **argv)
     if(!filenames.empty())
     {
         ll_children ast;
+        ll_inc_list includes;
         if(!create_directory_tree(outdir))
         {
             cerr << "could not create directory tree " << outdir << endl;
@@ -175,14 +176,19 @@ int main(int argc, char **argv)
             else
             {
                 ast.insert(ast.end(), driver.ast.begin(), driver.ast.end());
+                includes.insert(includes.end(), driver.includes.begin(), driver.includes.end());
                 if(outfile)
-                    mainresult |= do_codegen(gen_cpp, driver.ast, filename.replace_extension(".cpp"));
+                    mainresult |= do_codegen(gen_cpp, driver, filename.replace_extension(".cpp"));
                 if(genheader)
-                    mainresult |= do_codegen(gen_header, driver.ast, filename.replace_extension(".hpp"));
+                    mainresult |= do_codegen(gen_header, driver, filename.replace_extension(".hpp"));
             }
         }
+        // HACK : come up with something better than this...
+        lisplike_driver carrier;
+        carrier.ast = ast;
+        carrier.includes = includes;
         if(genmain)
-            mainresult |= do_codegen(gen_main, ast, path("main.cpp"));
+            mainresult |= do_codegen(gen_main, carrier, path("main.cpp"));
 
         if(mainresult == 0)
             cerr << "OK" << endl;

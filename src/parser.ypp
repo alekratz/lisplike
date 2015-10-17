@@ -41,6 +41,7 @@ class lisplike_driver;
 %define api.token.prefix {TOK_}
 %token
     END     0   "end of file"
+    EQUALS      "="
     LPAREN      "("
     RPAREN      ")"
     SQUOT       "'"
@@ -56,7 +57,11 @@ class lisplike_driver;
 %token <std::string> COND_SYM   "cond_sym"
 %token <std::string> MATH_OP    "math_op"
 
-%type <ll_children> unit
+/* %type <ll_children> unit */
+%type <ll_inc_list> inc_section
+%type <ll_inc_list> inc_list
+%type <ll_inc_p> inc
+%type <ll_children> exp_list
 %type <ll_tree_p> exp
 %type <ll_funcall_exp_p> funcall_exp
 %type <ll_fundecl_exp_p> fundecl_exp
@@ -64,7 +69,6 @@ class lisplike_driver;
 %type <ll_if_exp_p> if_exp
 %type <ll_bool_exp_p> bool_exp
 %type <ll_math_exp_p> math_exp
-%type <ll_inc_exp_p> inc_exp
 %type <ll_children> term_list
 %type <ll_term_p> term
 %type <ll_children> list
@@ -77,13 +81,41 @@ class lisplike_driver;
 %start unit;
 
 unit
-    : exp unit { 
+    : inc_section exp_list { 
+        driver.includes = $1;
+        driver.ast = $2;
+    }
+    ;
+
+inc_section
+    : EQUALS INC_KEYW inc_list EQUALS  { 
+        $$ = $3;
+    }
+    | %empty { $$ = ll_inc_list(); }
+    ;
+
+inc_list
+    : inc inc_list { 
         $2.insert($2.begin(), $1);
         $$ = $2;
-        driver.ast = $$;
     }
-    | %empty { $$ = ll_children(); }
+    | %empty { $$ = ll_inc_list(); }
     ;
+
+inc
+    : unpacked_string {
+        $$ = std::make_shared<ll_inc>(ll_inc(false, $1));
+    }
+    | NATIVE_KEYW unpacked_string {
+        $$ = std::make_shared<ll_inc>(ll_inc(true, $2));
+    }
+
+exp_list
+    : exp exp_list {
+        $2.insert($2.begin(), $1);
+        $$ = $2;
+    }
+    | %empty       { $$ = ll_children(); }
 
 exp
     : funcall_exp   { $$ = $1; }
@@ -92,7 +124,7 @@ exp
     | if_exp        { $$ = $1; }
     | bool_exp      { $$ = $1; }
     | math_exp      { $$ = $1; }
-    | inc_exp       { $$ = $1; }
+    /*| block_exp     { $$ = $1; }*/
     ;
 
 funcall_exp
@@ -130,14 +162,6 @@ math_exp
         if($3.size() < 2)
             driver.error(driver.lexer->loc, "math expression requires at least two arguments");
         $$ = std::make_shared<ll_math_exp>(ll_math_exp($2, $3));
-    }
-
-inc_exp
-    : LPAREN INC_KEYW unpacked_string RPAREN {
-        $$ = std::make_shared<ll_inc_exp>(ll_inc_exp(false, $3));
-    }
-    | LPAREN INC_KEYW NATIVE_KEYW unpacked_string RPAREN {
-        $$ = std::make_shared<ll_inc_exp>(ll_inc_exp(true, $4));
     }
 
 term_list 

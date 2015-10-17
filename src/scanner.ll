@@ -40,6 +40,9 @@ newline     \n
 alpha       [a-zA-Z]
 dig         [0-9]
 
+/* delimiters */
+equals      =
+
 /* function names */
 math_op     \+|-|\*|\/
 bool_op     =|<|>
@@ -58,6 +61,7 @@ loc.step();
 {newline}       { loc.lines(yyleng); loc.step(); }
 {ws}            loc.step();
 {comment}       { loc.lines(1); }
+{equals}        return yy::lisplike_parser::make_EQUALS(loc);
 {fun_keyw}      return yy::lisplike_parser::make_FUN_KEYW(loc);
 {let_keyw}      return yy::lisplike_parser::make_LET_KEYW(loc);
 {if_keyw}       return yy::lisplike_parser::make_IF_KEYW(loc);

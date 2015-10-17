@@ -3,17 +3,18 @@
 
 #include "ll_tree.hpp"
 
-class ll_inc_exp;
-typedef std::shared_ptr<ll_inc_exp> ll_inc_exp_p;
+class ll_inc;
+typedef std::shared_ptr<ll_inc> ll_inc_p;
+typedef std::vector<ll_inc_p> ll_inc_list;
 
-class ll_inc_exp
-    : public ll_tree, public ll_header
+class ll_inc
+    : public ll_tree
 {
 public:
-    ll_inc_exp(bool is_native, cstref path)
+    ll_inc(bool is_native, cstref path)
     : is_native(is_native)
     , path(path) { }
-    virtual ~ll_inc_exp() = default;
+    virtual ~ll_inc() = default;
 
 public:
     virtual std::string gencode();
@@ -22,9 +23,8 @@ public:
 public:
     bool is_native;
     std::string path;
-
-public:
-    virtual std::string genheader() { return gencode(); }
 };
+
+std::ostream& operator<<(std::ostream& os, const ll_inc_list& includes);
 
 #endif

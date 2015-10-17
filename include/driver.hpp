@@ -40,6 +40,7 @@ public:
     bool trace_parsing;
     int result;
     ll_children ast;
+    ll_inc_list includes; // TODO : make this collection specifically for ll_inc_p?
 
     lisplike_scanner* lexer;
 };
