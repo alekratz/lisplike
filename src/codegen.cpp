@@ -35,8 +35,8 @@ string gen_header(const lisplike_driver& driver)
             uuid_buf[i] = '_';
     }
 
-    result << "#ifndef " << uuid_buf << endl;
-    result << "#define " << uuid_buf << endl;
+    result << "#ifndef " << "_" << uuid_buf << endl;
+    result << "#define " << "_" << uuid_buf << endl;
     for(auto inc : driver.includes)
         result << inc->gencode() << endl;
     // Declare header decls
