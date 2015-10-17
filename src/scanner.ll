@@ -45,7 +45,7 @@ dig         [0-9]
 equals      =
 
 /* function names */
-math_op     \+|-|\*|\/
+math_op     \+|-|\*|\/|%
 bool_op     =|<|>
 ident       ({alpha}|_)({alpha}|_|{dig})*
 num         {dig}+

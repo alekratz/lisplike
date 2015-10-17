@@ -168,6 +168,7 @@ int main(int argc, char **argv)
 
         for(path filename : filenames)
         {
+            cerr << filename.string() << endl;
             if(!driver.parse_file(filename.string()))
             {
                 cerr << "error in " << filename << endl;

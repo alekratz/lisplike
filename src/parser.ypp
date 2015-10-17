@@ -53,7 +53,7 @@ class lisplike_driver;
     NONE_KEYW   "none"
 ;
 %token <std::string> IDENTIFIER "identifier"
-%token <double> NUMBER     "number"
+%token <double> NUMBER          "number"
 %token <std::string> STRING     "string"
 %token <std::string> COND_SYM   "cond_sym"
 %token <std::string> MATH_OP    "math_op"

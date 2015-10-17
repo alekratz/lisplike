@@ -123,46 +123,26 @@ inline bool operator== (const ll_value& left, const ll_value& right)
         return left.compare(right) == 0;
 }
 
+static ll_value operator%(const ll_value& left, int right)
+{
+    assert(left.type == ll_value_type::real && "tried to do % operation with a non real type");
+    return static_cast<int>(left.real_val) % right;
+}
+
+template<typename T>
+static ll_value operator%(int left, const ll_value& right)
+{
+    assert(right.type == ll_value_type::real && "tried to do % operation with a non real type");
+    return left % static_cast<int>(right.real_val);
+}
+
 template<typename T>
 inline bool operator== (const ll_value& left, const T& right)
-    { return left.compare(right) == 0.0; }
+    { return left.compare(right) == 0; }
 
-template <typename ... T>
-inline void print(const std::string& f, const T& ... tail)
-{
-    std::cout << fmt(f, tail ...);
-}
-
-template <typename ... T>
-inline std::string fmt(const std::string& f, const T& ...);
-
-template <typename ... T>
-inline std::string fmt(const std::string& f)
-{
-    return f;
-}
-
-template <typename Head, typename ... Tail>
-inline std::string fmt(const std::string& f, const Head& head, 
-    const Tail& ... tail)
-{
-    const std::string placeholder("%");
-
-    std::stringstream os;
-    size_t placeholderPos = f.find(placeholder);
-
-    if(placeholderPos == std::string::npos)
-        return f;
-    else
-    {
-        std::string front(f, 0, placeholderPos);
-        std::string back(f, placeholderPos + placeholder.size());
-
-        os << front << head << fmt(back, tail ...);
-    }
-
-    return os.str();
-}
+template<typename T>
+inline bool operator== (const T& left, const ll_value& right)
+    { return right.compare(left) == 0; }
 
 inline std::ostream& operator<<(std::ostream& os, const ll_value& val)
 {

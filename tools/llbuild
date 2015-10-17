@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Check args
+if [[ $# < 2 ]]; then
+    echo "usage: $0 target file1 [[ file2 file3 ... ]]"
+    exit 1
+fi
+
+gendir=cpp
+target=$1
+shift
+outfiles=""
+
+lisplike -d $gendir $* || exit 1
+g++ $gendir/*.cpp -I. -I$gendir -std=c++14 -o $target || exit 1

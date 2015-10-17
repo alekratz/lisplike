@@ -1,15 +1,7 @@
-="lib/ll"
-
-(let foo 5)
-(let bar "foobar")
-(let baz (* 2 foo))
-(fun factorial '(x) 
-  (if 
-      (== x 0)
-      1
-      (* x (factorial (- x 1)))
-  )
-)
+=inc
+"ll"
+"factorial"
+=
 
 (fun do_factorials '(n) 
     (if (> n 0) 
@@ -22,4 +14,7 @@
 )
 
 ;(print "%\n" (factorial 5))
+(print "testing factorials\n")
 (do_factorials 5)
+(print "testing fizzbuzz\n")
+(fizzbuzz 20)
