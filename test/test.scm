@@ -1,4 +1,3 @@
-;(inc "lib/ll")
 ="lib/ll"
 
 (let foo 5)
@@ -11,3 +10,16 @@
       (* x (factorial (- x 1)))
   )
 )
+
+(fun do_factorials '(n) 
+    (if (> n 0) 
+        (
+            (print "%: %\n" n (factorial n))
+            (do_factorials (- n 1))
+        )
+        none
+    )
+)
+
+;(print "%\n" (factorial 5))
+(do_factorials 5)

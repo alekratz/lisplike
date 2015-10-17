@@ -176,11 +176,16 @@ int main(int argc, char **argv)
             else
             {
                 ast.insert(ast.end(), driver.ast.begin(), driver.ast.end());
-                includes.insert(includes.end(), driver.includes.begin(), driver.includes.end());
+                includes.insert(driver.includes.begin(), driver.includes.end());
                 if(outfile)
                     mainresult |= do_codegen(gen_cpp, driver, filename.replace_extension(".cpp"));
                 if(genheader)
+                {
                     mainresult |= do_codegen(gen_header, driver, filename.replace_extension(".hpp"));
+                    // add this path to the master list of includes for main.cpp
+                    auto include = (outdir / filename.filename()).replace_extension("").string();
+                    includes.insert(make_shared<ll_inc>(false, include));
+                }
             }
         }
         // HACK : come up with something better than this...

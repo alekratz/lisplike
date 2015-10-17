@@ -23,6 +23,7 @@ enum class ll_value_type
     real,
     fun,
     list,
+    none
 };
 
 class ll_value;
@@ -46,6 +47,8 @@ public:
     ll_value(ll_value_list val)
         : list_val(val)
         , type(ll_value_type::list) { }
+    ll_value()
+        : type(ll_value_type::none) { }
 
 public:
     template<typename T>

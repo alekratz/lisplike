@@ -2,24 +2,19 @@
 #include "format.hpp"
 #include "util.hpp"
 #include <string>
+#include <sstream>
 
 using namespace std;
 
 string ll_fundecl_exp::gencode()
 {
-    string linestr = "ll_value " + identifier;
-    linestr += "(";
-    linestr += "ll_value " + pad_internal(params, ", ll_value ");
-    linestr += ") {\n";
-    for(auto it = term_list.begin(); it != term_list.end(); it++)
-    {
-        if(it + 1 == term_list.end())
-            linestr += "\treturn " + (*it)->gencode() + ";\n";
-        else
-            linestr += "\t" + (*it)->gencode() + ";\n";
-    }
-    linestr += "}\n";
-    return linestr;
+    stringstream builder;
+    builder << "ll_value " << identifier;
+    builder << "(ll_value " << pad_internal(params, ", ll_value ") << ")";
+    builder << " {" << endl;
+    builder << format("return %;", term->gencode()) << endl;
+    builder << "}" << endl;
+    return builder.str();
 }
 
 string ll_funcall_exp::gencode()
@@ -51,6 +46,21 @@ string ll_math_exp::gencode()
     math_exp += pad_internal(term_list, math_op);
     math_exp += ")";
     return math_exp;
+}
+
+string ll_block_exp::gencode()
+{
+    stringstream builder;
+    builder << "[&]() -> ll_value {" << endl;
+    for(auto it = children.begin(); it != children.end(); it++)
+    {
+        if(it + 1 == children.end())
+            builder << "return " << (*it)->gencode() << ";" << endl;
+        else
+            builder << (*it)->gencode() << ";" << endl;
+    }
+    builder << "}()" << endl;
+    return builder.str();
 }
 
 string ll_inc::gencode()

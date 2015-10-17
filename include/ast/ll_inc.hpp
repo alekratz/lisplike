@@ -2,10 +2,11 @@
 #define LL_INC_EXP_HPP
 
 #include "ll_tree.hpp"
+#include <set>
 
 class ll_inc;
 typedef std::shared_ptr<ll_inc> ll_inc_p;
-typedef std::vector<ll_inc_p> ll_inc_list;
+typedef std::set<ll_inc_p> ll_inc_list;
 
 class ll_inc
     : public ll_tree
