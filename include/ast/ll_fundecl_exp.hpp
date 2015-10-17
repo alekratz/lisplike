@@ -19,6 +19,8 @@ public:
     virtual ~ll_fundecl_exp() = default;
 
 public:
+    virtual bool header_needs() { return true; }
+    
     virtual std::string gencode();
     virtual std::string genheader();
 

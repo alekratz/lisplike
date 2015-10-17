@@ -24,6 +24,7 @@ fun_keyw    fun
 let_keyw    let
 if_keyw     if
 inc_keyw    inc
+native_keyw native
 
 /* symbols */
 lparen        \(
@@ -33,18 +34,19 @@ dquot         \"
 /* ignore the weird comment/double quote - syntax highlighting isn't smart enough to pick up the escaped quote "*/
 
 /* literals */
-string        {dquot}[^\n]*{dquot}
-ws                [\t ]
+string      {dquot}[^\n]*{dquot}
+ws          [\t ]
 newline     \n
-alpha         [a-zA-Z]
-dig             [0-9]
+alpha       [a-zA-Z]
+dig         [0-9]
 
 /* function names */
 math_op     \+|-|\*|\/
 bool_op     =|<|>
-ident         ({alpha}|_)({alpha}|_|{dig})*
-num             {dig}+
+ident       ({alpha}|_)({alpha}|_|{dig})*
+num         {dig}+
 cond_sym    {bool_op}{bool_op}?
+comment     ;[^\n]*{newline}
 
 %%
 
@@ -55,10 +57,12 @@ loc.step();
 
 {newline}       { loc.lines(yyleng); loc.step(); }
 {ws}            loc.step();
+{comment}       { loc.lines(1); }
 {fun_keyw}      return yy::lisplike_parser::make_FUN_KEYW(loc);
 {let_keyw}      return yy::lisplike_parser::make_LET_KEYW(loc);
 {if_keyw}       return yy::lisplike_parser::make_IF_KEYW(loc);
 {inc_keyw}      return yy::lisplike_parser::make_INC_KEYW(loc);
+{native_keyw}   return yy::lisplike_parser::make_NATIVE_KEYW(loc);
 {string}        return yy::lisplike_parser::make_STRING(yytext, loc);
 {ident}         return yy::lisplike_parser::make_IDENTIFIER(yytext, loc);
 {cond_sym}      return yy::lisplike_parser::make_COND_SYM(yytext, loc);

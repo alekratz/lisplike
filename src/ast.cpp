@@ -59,7 +59,10 @@ string ll_inc_exp::gencode()
     in clang 3.7, this segfaults the compiler. It just has the removed "int" declaration. Not sure why.
     return format("#include \"%.hpp\"", trim(path, [](i){ return i == '"'; }));
     */
-    return format("#include \"%.hpp\"", trim(path, [](int i){ return i == '"'; }));
+    if(is_native)
+        return format("#include <%>", path);
+    else
+        return format("#include \"%.hpp\"", path);
 }
 
 string ll_term::gencode()

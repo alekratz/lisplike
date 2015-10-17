@@ -48,9 +48,10 @@ class lisplike_driver;
     LET_KEYW    "let"
     IF_KEYW     "if"
     INC_KEYW    "inc"
+    NATIVE_KEYW "native"
 ;
 %token <std::string> IDENTIFIER "identifier"
-%token <long double> NUMBER     "number"
+%token <double> NUMBER     "number"
 %token <std::string> STRING     "string"
 %token <std::string> COND_SYM   "cond_sym"
 %token <std::string> MATH_OP    "math_op"
@@ -67,6 +68,7 @@ class lisplike_driver;
 %type <ll_children> term_list
 %type <ll_term_p> term
 %type <ll_children> list
+%type <std::string> unpacked_string
 
 %printer { yyoutput << $$; } <*>;
 
@@ -131,8 +133,11 @@ math_exp
     }
 
 inc_exp
-    : LPAREN INC_KEYW STRING RPAREN {
-        $$ = std::make_shared<ll_inc_exp>(ll_inc_exp($3));
+    : LPAREN INC_KEYW unpacked_string RPAREN {
+        $$ = std::make_shared<ll_inc_exp>(ll_inc_exp(false, $3));
+    }
+    | LPAREN INC_KEYW NATIVE_KEYW unpacked_string RPAREN {
+        $$ = std::make_shared<ll_inc_exp>(ll_inc_exp(true, $4));
     }
 
 term_list 
@@ -151,11 +156,17 @@ term
         $$ = std::make_shared<ll_term>(ll_term($1));
     }
     | NUMBER        { $$ = std::make_shared<ll_term>(ll_term($1)); }
-    | STRING        { $$ = std::make_shared<ll_term>(ll_term($1)); }
+    | STRING        { 
+        $$ = std::make_shared<ll_term>(ll_term($1)); 
+    }
     ;
 
 list
     : SQUOT LPAREN term_list RPAREN { $$ = $3; }
+    ;
+
+unpacked_string
+    : STRING { $$ = trim($1, [](int i){ return i == '"'; }); }
     ;
 
 %%

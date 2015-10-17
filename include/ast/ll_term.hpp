@@ -19,7 +19,7 @@ class ll_term
     : public ll_tree
 {
 public:
-    ll_term(long double val) 
+    ll_term(double val) 
         : real_val(val)
         , type(ll_term_type::real) { }
     ll_term(cstref val)
@@ -41,7 +41,7 @@ public:
 
 public:
     std::string str_val;
-    long double real_val;
+    double real_val;
     ll_children list_val;
     // TODO : dict_value
     ll_tree_p exp_val;

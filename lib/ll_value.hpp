@@ -3,6 +3,11 @@
 
 #include <string>
 #include <vector>
+#include <memory>
+#include <algorithm>
+#include <iostream>
+#include <sstream>
+#include <cassert>
 
 /*
  * This file is a representation of a Lisp-Like value. It's designed to be
@@ -20,7 +25,10 @@ enum class ll_value_type
     list,
 };
 
+class ll_value;
+
 typedef const std::string& cstref;
+typedef std::shared_ptr<ll_value> ll_value_p;
 typedef std::vector<ll_value_p> ll_value_list;
 
 class ll_value
@@ -32,17 +40,100 @@ public:
     ll_value(const char *val)
         : str_val(val)
         , type(ll_value_type::str) { }
-    ll_value(long double val)
+    ll_value(double val)
         : real_val(val)
         , type(ll_value_type::real) { }
     ll_value(ll_value_list val)
         : list_val(val)
         , type(ll_value_type::list) { }
 
-private:
+public:
+    template<typename T>
+    int compare(T other) const;
+
+    int compare(const ll_value& other) const
+    {
+        switch(type)
+        {
+            case ll_value_type::str:
+                return str_val.compare(other.str_val);
+            case ll_value_type::real:
+                if(real_val < other.real_val) return -1;
+                else if(real_val > other.real_val) return 1;
+                else return 0;
+            case ll_value_type::list:
+                if(list_val.size() < other.list_val.size())
+                    return -1;
+                else if(list_val.size() > other.list_val.size())
+                    return 1;
+                else
+                    return !(std::equal(list_val.begin(), list_val.end(), other.list_val.begin()));
+            default:
+                assert(false && "unknown ll_value type");
+                return 1;
+        }
+    }
+
+    int compare(int other) const
+        { return (real_val - other); }
+
+    operator double() const
+        { return real_val; }
+
+public:
     std::string str_val;
-    long double real_val;
+    double real_val;
     ll_value_list list_val;
+    ll_value_type type;
 };
+
+inline bool operator== (const ll_value& left, const ll_value& right)
+{
+    if(left.type != right.type)
+        return false;
+    else
+        return left.compare(right) == 0;
+}
+
+template<typename T>
+inline bool operator== (const ll_value& left, const T& right)
+    { return left.compare(right) == 0.0; }
+
+template <typename ... T>
+inline void print(const std::string& f, const T& ... tail)
+{
+    std::cout << fmt(f, tail ...);
+}
+
+template <typename ... T>
+inline std::string fmt(const std::string& f, const T& ...);
+
+template <typename ... T>
+inline std::string fmt(const std::string& f)
+{
+    return f;
+}
+
+template <typename Head, typename ... Tail>
+inline std::string fmt(const std::string& f, const Head& head, 
+    const Tail& ... tail)
+{
+    const std::string placeholder("%");
+
+    std::stringstream os;
+    size_t placeholderPos = f.find(placeholder);
+
+    if(placeholderPos == std::string::npos)
+        return f;
+    else
+    {
+        std::string front(f, 0, placeholderPos);
+        std::string back(f, placeholderPos + placeholder.size());
+
+        os << front << head << fmt(back, tail ...);
+    }
+
+    return os.str();
+}
 
 #endif
