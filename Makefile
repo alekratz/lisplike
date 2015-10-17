@@ -7,6 +7,12 @@ SRC=src
 BIN=bin
 GEN=gen
 
+# Install stuff
+INSTALL_PREFIX=/usr/local
+INSTALL_BIN=$(INSTALL_PREFIX)/bin
+INSTALL_INC=$(INSTALL_PREFIX)/include
+INSTALL_LIB=$(INSTALL_PREFIX)/lib
+
 # Input files
 CXXFILES=$(SRC)/driver.cpp $(SRC)/ast.cpp  $(SRC)/util.cpp $(SRC)/codegen.cpp
 FLEXFILES=$(SRC)/scanner.ll
@@ -73,3 +79,9 @@ html: | $(GEN)
 	$(BISON) --xml=$(BISON_XML) $(BISONFILES)
 	rm {location,position,stack}.hh parser.tab.{cpp,hpp}
 	xsltproc $(BISON_SHARE_DIR)/xslt/xml2xhtml.xsl $(BISON_XML) > $(BISON_HTML)
+
+.PHONY: install
+install: $(TARGET)
+	install -m 755 $(TARGET) $(INSTALL_BIN)
+	install -D -m 644 lib/include/* $(INSTALL_INC)
+#	install -D -m 644 lib/lib/* $(INSTALL_LIB)
