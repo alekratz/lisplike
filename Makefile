@@ -23,8 +23,10 @@ OFILES=$(CXXFILES:$(SRC)/%.cpp=$(BIN)/%.o) \
 	$(BISON_TARGET:$(GEN)/%.cpp=$(BIN)/%.o)
 DEPFILES=$(OFILES:%.o=%.d)
 
-CXXFLAGS=-c -g -O0 -std=c++14 -I$(GEN) -I$(GEN)/include -Iinclude -MP -MMD -Wall
-LDFLAGS=-g -lboost_system -lboost_filesystem
+CXXFLAGS=-c -g -O0 -std=c++14 -I$(GEN) -I$(GEN)/include -Iinclude -MP -MMD -Wall \
+	$(shell pkg-config --cflags uuid)
+LDFLAGS=-g -lboost_system -lboost_filesystem \
+	$(shell pkg-config --libs uuid)
 LFLAGS=-+ --header
 BISONFLAGS=--defines=$(GEN)/include/parser.hpp
 

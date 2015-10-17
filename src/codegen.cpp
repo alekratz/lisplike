@@ -4,6 +4,9 @@
 #include <string>
 #include <sstream>
 #include <set>
+#include <uuid.h>
+
+#define UUID_LEN 36
 
 using namespace std;
 
@@ -20,7 +23,20 @@ string ll_fundecl_exp::genheader()
 string gen_header(const lisplike_driver& driver)
 {
     stringstream result;
-    // TODO: include guard
+
+    // UUID for the header include guard
+    char uuid_buf[UUID_LEN];
+    uuid_t uuid_gen;
+    uuid_generate_random(uuid_gen);
+    uuid_unparse(uuid_gen, uuid_buf);
+    for(int i = 0; i < UUID_LEN; i++)
+    {
+        if(uuid_buf[i] == '-')
+            uuid_buf[i] = '_';
+    }
+
+    result << "#ifndef " << uuid_buf << endl;
+    result << "#define " << uuid_buf << endl;
     for(auto inc : driver.includes)
         result << inc->gencode() << endl;
     // Declare header decls
@@ -31,6 +47,7 @@ string gen_header(const lisplike_driver& driver)
             result << dynamic_pointer_cast<ll_header>(ll_child)->genheader() << endl;
         // otherwise... ignore
     }
+    result << "#endif" << endl;
     return result.str();
 }
 
