@@ -78,7 +78,25 @@ public:
         { return (real_val - other); }
 
     operator double() const
-        { return real_val; }
+    {
+        assert(type == ll_value_type::real
+            && "tried to coerce a double into some other type"); 
+        return real_val;
+    }
+
+    operator const char*() const
+    {
+        assert(type == ll_value_type::str
+            && "tried to coerce a string into some other type"); 
+        return str_val.c_str();
+    }
+
+    operator const std::string&() const
+    {
+        assert(type == ll_value_type::str
+            && "tried to coerce a string into some other type"); 
+        return str_val;
+    }
 
 public:
     std::string str_val;
@@ -134,6 +152,27 @@ inline std::string fmt(const std::string& f, const Head& head,
     }
 
     return os.str();
+}
+
+inline std::ostream& operator<<(std::ostream& os, const ll_value& val)
+{
+    switch(val.type)
+    {
+        case ll_value_type::str:
+            os << val.str_val;
+            break;
+        case ll_value_type::real:
+            os << val.real_val;
+            break;
+        case ll_value_type::list:
+            // TODO
+            os << "- LIST VALUE -";
+            break;
+        default:
+            assert(false && "unknown ll_value_type to convert to when outputting to ostream");
+            break;
+    }
+    return os;
 }
 
 #endif
