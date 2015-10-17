@@ -108,9 +108,16 @@ public:
     ll_value_type type;
 };
 
+inline bool isnone(const ll_value& val)
+{
+    return val.type == ll_value_type::none;
+}
+
 inline bool operator== (const ll_value& left, const ll_value& right)
 {
     if(left.type != right.type)
+        return false;
+    else if(left.type == ll_value_type::none || right.type == ll_value_type::none)
         return false;
     else
         return left.compare(right) == 0;
@@ -170,6 +177,9 @@ inline std::ostream& operator<<(std::ostream& os, const ll_value& val)
         case ll_value_type::list:
             // TODO
             os << "- LIST VALUE -";
+            break;
+        case ll_value_type::none:
+            os << "none";
             break;
         default:
             assert(false && "unknown ll_value_type to convert to when outputting to ostream");
