@@ -29,8 +29,8 @@ enum class ll_value_type
 class ll_value;
 
 typedef const std::string& cstref;
-typedef std::shared_ptr<ll_value> ll_value_p;
-typedef std::vector<ll_value_p> ll_value_list;
+//typedef std::shared_ptr<ll_value> ll_value_p;
+typedef std::vector<ll_value> ll_value_list;
 
 class ll_value
 {
@@ -155,8 +155,10 @@ inline std::ostream& operator<<(std::ostream& os, const ll_value& val)
             os << val.real_val;
             break;
         case ll_value_type::list:
-            // TODO
-            os << "- LIST VALUE -";
+            os << "{ ";
+            for(auto v : val.list_val)
+                os << v << " ";
+            os << "}";
             break;
         case ll_value_type::none:
             os << "none";

@@ -1,6 +1,7 @@
 =inc
 "ll"
 "factorial"
+"fizzbuzz"
 =
 
 (fun do_factorials '(n) 
@@ -18,3 +19,4 @@
 (do_factorials 5)
 (print "testing fizzbuzz\n")
 (fizzbuzz 20)
+(print "%\n" (seq 1 10))

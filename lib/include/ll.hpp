@@ -2,6 +2,7 @@
 #define LL_HPP
 
 #include "ll_value.hpp"
+#include "ll_util.hpp"
 
 template <typename ... T>
 inline std::string fmt(const std::string& f, const T& ...);

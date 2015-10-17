@@ -11,5 +11,8 @@ target=$1
 shift
 outfiles=""
 
+echo == compiling lisp . . .
 lisplike -d $gendir $* || exit 1
+echo == compiling c++ . . .
 g++ $gendir/*.cpp -I. -I$gendir -std=c++14 -o $target || exit 1
+echo == DONE
