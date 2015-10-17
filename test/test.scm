@@ -1,7 +1,5 @@
 ;(inc "lib/ll")
-=inc
-"lib/ll"
-=
+="lib/ll"
 
 (let foo 5)
 (let bar "foobar")

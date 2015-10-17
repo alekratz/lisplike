@@ -88,7 +88,12 @@ unit
     ;
 
 inc_section
-    : EQUALS INC_KEYW inc_list EQUALS  { 
+    : EQUALS INC_KEYW inc_list EQUALS inc_section  {
+        $5.insert($5.begin(), $3.begin(), $3.end());
+        $$ = $5;
+    }
+    | EQUALS inc inc_section {
+        $3.insert($3.begin(), $2);
         $$ = $3;
     }
     | %empty { $$ = ll_inc_list(); }

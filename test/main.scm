@@ -1,6 +1,4 @@
-=inc
-"test"
-=
+="test"
 
 (fun do_factorials '(n) 
     (if (> n 0) 
