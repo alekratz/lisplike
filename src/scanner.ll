@@ -48,7 +48,7 @@ equals      =
 math_op     \+|-|\*|\/|%
 bool_op     =|<|>
 ident       ({alpha}|_)({alpha}|_|{dig})*
-num         {dig}+
+num         [+-]?{dig}*(\.{dig}+)?
 cond_sym    {bool_op}{bool_op}?
 comment     ;[^\n]*{newline}
 
@@ -74,17 +74,14 @@ loc.step();
 {cond_sym}      return yy::lisplike_parser::make_COND_SYM(yytext, loc);
 {math_op}       return yy::lisplike_parser::make_MATH_OP(yytext, loc);
 {num}           {
-    errno = 0;
-    int64_t val = strtol(yytext, NULL, 10);
-    if(errno == ERANGE)
-        driver.error(loc, "integer is out of range");
-    return yy::lisplike_parser::make_NUMBER(val, loc);
+        double val = std::stod(yytext);
+        return yy::lisplike_parser::make_NUMBER(val, loc);
     }
 {lparen}        return yy::lisplike_parser::make_LPAREN(loc);
 {rparen}        return yy::lisplike_parser::make_RPAREN(loc);
 {squot}         return yy::lisplike_parser::make_SQUOT(loc);
 
-.                 { driver.error(loc, "unexpected token"); }
+.               { driver.error(loc, "unexpected token"); }
 %%
 
 int yyFlexLexer::yylex()
