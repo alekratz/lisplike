@@ -36,6 +36,13 @@ inline std::string fmt(const std::string& f, const Head& head,
 }
 
 template <typename ... T>
+inline ll_value println(const std::string& f, const T& ... tail)
+{
+    std::cout << fmt(f, tail ...) << std::endl;
+    return ll_value();
+}
+
+template <typename ... T>
 inline ll_value print(const std::string& f, const T& ... tail)
 {
     std::cout << fmt(f, tail ...);

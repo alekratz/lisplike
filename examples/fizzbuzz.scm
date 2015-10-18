@@ -12,7 +12,7 @@
                 (print "buzz")
                 none
             )
-            (print "\n")
+            (println "")
             (fizzbuzz (- n 1))
         )
         none
