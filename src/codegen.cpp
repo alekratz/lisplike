@@ -12,7 +12,7 @@ using namespace std;
 
 string ll_let_exp::genheader()
 {
-    return format("extern ll_value %;", identifier);
+    return format("extern const ll_value %;", identifier);
 }
 
 string ll_fundecl_exp::genheader()

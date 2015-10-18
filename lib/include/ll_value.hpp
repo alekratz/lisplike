@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <initializer_list>
 #include <memory>
 #include <algorithm>
 #include <iostream>
@@ -46,6 +47,9 @@ public:
         , type(ll_value_type::real) { }
     ll_value(ll_value_list val)
         : list_val(val)
+        , type(ll_value_type::list) { }
+    ll_value(std::initializer_list<ll_value> list)
+        : list_val(list)
         , type(ll_value_type::list) { }
     ll_value()
         : type(ll_value_type::none) { }

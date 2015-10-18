@@ -22,3 +22,5 @@
 (println "testing sequences")
 (println "%" (seq 1 2 0.1))
 (println "%" (seq 2 1 -0.1))
+(let demo_array '("here" "is" "an" "array" 1 2 3 4 5))
+(println "%" demo_array)
