@@ -22,6 +22,8 @@
 /* keywords */
 fun_keyw    fun
 let_keyw    let
+letm_keyw   letm
+set_keyw    set
 if_keyw     if
 inc_keyw    inc
 native_keyw native
@@ -68,6 +70,8 @@ loc.step();
 {equals}        return yy::lisplike_parser::make_EQUALS(loc);
 {fun_keyw}      return yy::lisplike_parser::make_FUN_KEYW(loc);
 {let_keyw}      return yy::lisplike_parser::make_LET_KEYW(loc);
+{letm_keyw}     return yy::lisplike_parser::make_LETM_KEYW(loc);
+{set_keyw}      return yy::lisplike_parser::make_SET_KEYW(loc);
 {if_keyw}       return yy::lisplike_parser::make_IF_KEYW(loc);
 {inc_keyw}      return yy::lisplike_parser::make_INC_KEYW(loc);
 {native_keyw}   return yy::lisplike_parser::make_NATIVE_KEYW(loc);

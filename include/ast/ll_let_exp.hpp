@@ -10,8 +10,9 @@ class ll_let_exp
     : public ll_tree, public ll_header
 {
 public:
-    ll_let_exp(cstref identifier, ll_term_p term)
-    : identifier(identifier)
+    ll_let_exp(bool is_mutable, cstref identifier, ll_term_p term)
+    : is_mutable(is_mutable)
+    , identifier(identifier)
     , term(term) { }
     virtual ~ll_let_exp() = default;
 
@@ -20,6 +21,7 @@ public:
     virtual bool header_needs() { return true; }
 
 public:
+    bool is_mutable;
     std::string identifier;
     ll_term_p term;
 

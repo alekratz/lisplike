@@ -25,7 +25,15 @@ string ll_funcall_exp::gencode()
 
 string ll_let_exp::gencode()
 {
-    return format("const ll_value % = %;", identifier, term->gencode());
+    if(is_mutable)
+        return format("ll_value % = %;", identifier, term->gencode());
+    else
+        return format("const ll_value % = %;", identifier, term->gencode());
+}
+
+string ll_set_exp::gencode()
+{
+    return format("% = %;", identifier, term->gencode());
 }
 
 string ll_if_exp::gencode()

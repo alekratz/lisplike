@@ -25,3 +25,7 @@
 (let demo_array '("here" "is" "an" "array" "of" "mixed" "types" 1 2 3 4 5))
 (println "demo array:")
 (println "%" demo_array)
+(letm mvar "This is a mutable variable")
+(println "%" mvar)
+(set mvar "And now it has a different value")
+(println "%" mvar)

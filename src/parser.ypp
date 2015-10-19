@@ -48,6 +48,8 @@ class lisplike_driver;
     DOT         "."
     FUN_KEYW    "fun"
     LET_KEYW    "let"
+    LETM_KEYW   "letm"
+    SET_KEYW    "set"
     IF_KEYW     "if"
     INC_KEYW    "inc"
     NATIVE_KEYW "native"
@@ -68,6 +70,7 @@ class lisplike_driver;
 %type <ll_funcall_exp_p> funcall_exp
 %type <ll_fundecl_exp_p> fundecl_exp
 %type <ll_let_exp_p> let_exp
+%type <ll_set_exp_p> set_exp
 %type <ll_if_exp_p> if_exp
 %type <ll_bool_exp_p> bool_exp
 %type <ll_math_exp_p> math_exp
@@ -134,6 +137,7 @@ exp
     : funcall_exp   { $$ = $1; }
     | fundecl_exp   { $$ = $1; }
     | let_exp       { $$ = $1; }
+    | set_exp       { $$ = $1; }
     | if_exp        { $$ = $1; }
     | bool_exp      { $$ = $1; }
     | math_exp      { $$ = $1; }
@@ -154,7 +158,16 @@ fundecl_exp
 
 let_exp
     : LPAREN LET_KEYW IDENTIFIER term RPAREN { 
-        $$ = std::make_shared<ll_let_exp>(ll_let_exp($3, $4)); 
+        $$ = std::make_shared<ll_let_exp>(ll_let_exp(false, $3, $4));
+    }
+    | LPAREN LETM_KEYW IDENTIFIER term RPAREN {
+        $$ = std::make_shared<ll_let_exp>(ll_let_exp(true, $3, $4));
+    }
+    ;
+
+set_exp
+    : LPAREN SET_KEYW IDENTIFIER term RPAREN { 
+        $$ = std::make_shared<ll_set_exp>(ll_set_exp($3, $4));
     }
     ;
 
