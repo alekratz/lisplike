@@ -1,18 +1,77 @@
 #!/bin/bash
 
+function usage() {
+    echo "usage: $0 [opts] file1 [ file2 ... ]"
+    echo
+    echo "opts:"
+    echo "-o [file]                 output file"
+    echo "-d [dir]                  output dir"
+    echo "-h                        don't generate header"
+    echo "-m                        don't generate main"
+    echo "-s                        follow scanning"
+    echo "-p                        follow parsing"
+    echo "-v                        verbose output"
+}
+
 # Check args
-if [[ $# < 2 ]]; then
-    echo "usage: $0 target file1 [[ file2 file3 ... ]]"
+if [[ $# == 0 ]]; then
+    usage
     exit 1
 fi
 
-gendir=cpp
-target=$1
-shift
-outfiles=""
+gendir=.
+target="a.out"
+llargs=""
+
+while getopts "o:d:hmspv" OPT; do
+    case $OPT in
+        o)
+            target=$OPTARG
+            ;;
+        d)
+            gendir=$OPTARG
+            ;;
+        h)
+            llargs="-h $llargs"
+            ;;
+        m)
+            llargs="-m $llargs"
+            ;;
+        s)
+            llargs="-s $llargs"
+            ;;
+        p)
+            llargs="-p $llargs"
+            ;;
+        v)
+            llargs="-v $llargs"
+            ;;
+        \?)
+            usage
+            exit 1
+            ;;
+    esac
+done
+shift $(($OPTIND-1))
+compfiles="$*"
+genfiles=$(for f in $compfiles; do echo "$gendir/$(basename ${f%.*}).cpp"; done)
+# make sure to include main.cpp if applicable
+if [[ ! $llargs =~ "-m" ]]; then genfiles="$genfiles $gendir/main.cpp"; fi
+ofiles=$(for f in $genfiles; do echo "$f.o"; done)
+
+if [[ $# == 0 ]]; then
+    usage
+    exit 1
+fi
 
 echo == compiling lisp . . .
-lisplike -d $gendir $* || exit 1
+echo lisplike $llargs -o "$target" -d "$gendir" $compfiles
+lisplike $llargs -d "$gendir" $compfiles || exit 1
 echo == compiling c++ . . .
-g++ $gendir/*.cpp -I. -I$gendir -std=c++14 -o $target || exit 1
+for f in $genfiles; do
+    echo g++ -c $f -I. -I$gendir -std=c++14 -o $f.o
+    g++ -c $f -I. -I$gendir -std=c++14 -o $f.o || exit 1
+done
+echo g++ $ofiles -std=c++14 -o $target
+g++ $ofiles -std=c++14 -o "$target" || exit 1
 echo == DONE
