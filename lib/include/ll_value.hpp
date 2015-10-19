@@ -161,7 +161,12 @@ inline std::ostream& operator<<(std::ostream& os, const ll_value& val)
         case ll_value_type::list:
             os << "{ ";
             for(auto v : val.list_val)
-                os << v << " ";
+            {
+                if(v.type == ll_value_type::str)
+                    os << "\"" << v << "\" ";
+                else
+                    os << v << " ";
+            }
             os << "}";
             break;
         case ll_value_type::none:
