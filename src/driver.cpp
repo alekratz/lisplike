@@ -24,6 +24,7 @@ lisplike_driver::~lisplike_driver()
 
 bool lisplike_driver::parse_stream(istream& in, const string& sname, std::ostream& out)
 {
+    reset();
     streamname = sname;
     lisplike_scanner scanner(&in);
     scanner.set_debug(trace_scanning);
@@ -178,15 +179,19 @@ int main(int argc, char **argv)
             {
                 ast.insert(ast.end(), driver.ast.begin(), driver.ast.end());
                 includes.insert(driver.includes.begin(), driver.includes.end());
-                if(outfile)
-                    mainresult |= do_codegen(gen_cpp, driver, filename.replace_extension(".cpp"));
                 if(genheader)
                 {
-                    mainresult |= do_codegen(gen_header, driver, filename.replace_extension(".hpp"));
                     // add this path to the master list of includes for main.cpp
-                    auto include = (outdir / filename.filename()).replace_extension("").string();
-                    includes.insert(make_shared<ll_inc>(false, include));
+                    // also add this generated header to driver itself so that it gets included in the cpp file
+                    auto include = make_shared<ll_inc>(false,
+                        (outdir / filename.filename()).replace_extension("").string());
+                    includes.insert(include);
+                    driver.includes.insert(include);
+                    mainresult |= do_codegen(gen_header, driver, filename.replace_extension(".hpp"));
                 }
+
+                if(outfile)
+                    mainresult |= do_codegen(gen_cpp, driver, filename.replace_extension(".cpp"));
             }
         }
         // HACK : come up with something better than this...

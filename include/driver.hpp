@@ -31,6 +31,13 @@ public:
     void error (const yy::location& l, const std::string& m);
     void error (const std::string& m);
 
+private:
+    void reset()
+    {
+        ast.clear();
+        includes.clear();
+    }
+
     /* members */
 public:
     std::unordered_map<std::string, int> variables;
