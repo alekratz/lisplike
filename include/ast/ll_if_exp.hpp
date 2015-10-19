@@ -12,8 +12,8 @@ class ll_if_exp
     : public ll_tree
 {
 public:
-    ll_if_exp(ll_bool_exp_p bool_exp, ll_term_p term1, ll_term_p term2)
-        : bool_exp(bool_exp)
+    ll_if_exp(ll_tree_p cond_exp, ll_term_p term1, ll_term_p term2)
+        : cond_exp(cond_exp)
         , term1(term1)
         , term2(term2) { }
     virtual ~ll_if_exp() = default;
@@ -22,7 +22,7 @@ public:
     virtual std::string gencode();
 
 public:
-    ll_bool_exp_p bool_exp;
+    ll_tree_p cond_exp;
     ll_term_p term1;
     ll_term_p term2;
 };

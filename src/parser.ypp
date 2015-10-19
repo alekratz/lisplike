@@ -45,6 +45,7 @@ class lisplike_driver;
     LPAREN      "("
     RPAREN      ")"
     SQUOT       "'"
+    DOT         "."
     FUN_KEYW    "fun"
     LET_KEYW    "let"
     IF_KEYW     "if"
@@ -74,6 +75,9 @@ class lisplike_driver;
 
 %type <ll_children> term_list
 %type <ll_term_p> term
+
+%type <std::string> qualified_name
+%type <std::string> qualified_name_tail
 %type <ll_children> list
 %type <std::string> none
 %type <std::string> unpacked_string
@@ -137,7 +141,7 @@ exp
     ;
 
 funcall_exp
-    : LPAREN IDENTIFIER term_list RPAREN {
+    : LPAREN qualified_name term_list RPAREN {
         $$ = std::make_shared<ll_funcall_exp>(ll_funcall_exp($2, $3));
     }
     ;
@@ -155,7 +159,8 @@ let_exp
     ;
 
 if_exp
-    : LPAREN IF_KEYW bool_exp term term RPAREN {
+    /* TODO : restrict fundecl expressions */
+    : LPAREN IF_KEYW exp term term RPAREN {
         $$ = std::make_shared<ll_if_exp>(ll_if_exp($3, $4, $5));
     }
     ;
@@ -190,9 +195,20 @@ term
     : exp           { $$ = std::make_shared<ll_term>(ll_term($1)); }
     | list          { $$ = std::make_shared<ll_term>(ll_term($1)); }
     | none          { $$ = std::make_shared<ll_term>(ll_term($1)); }
-    | IDENTIFIER    { $$ = std::make_shared<ll_term>(ll_term($1)); }
+    | qualified_name{ $$ = std::make_shared<ll_term>(ll_term($1)); }
     | NUMBER        { $$ = std::make_shared<ll_term>(ll_term($1)); }
     | STRING        { $$ = std::make_shared<ll_term>(ll_term($1)); }
+    ;
+
+qualified_name
+    : IDENTIFIER qualified_name_tail
+                    { $$ = $1 + $2; }
+    ;
+
+qualified_name_tail
+    : DOT IDENTIFIER qualified_name_tail
+                    { $$ = "[\"" + $2 + "\"]" + $3; }
+    | %empty        { $$ = std::string(); }
     ;
 
 list

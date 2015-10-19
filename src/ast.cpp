@@ -30,7 +30,7 @@ string ll_let_exp::gencode()
 
 string ll_if_exp::gencode()
 {
-    return format("((%) ? (%) : (%))", bool_exp->gencode(), term1->gencode(), term2->gencode());
+    return format("((%) ? (%) : (%))", cond_exp->gencode(), term1->gencode(), term2->gencode());
 //    return format("[&](){if(%) { return %; } else { return %; }}()", bool_exp->gencode(), term1->gencode(), term2->gencode());
 }
 
