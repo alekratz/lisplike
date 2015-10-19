@@ -35,7 +35,9 @@ dquot         \"
 /* ignore the weird comment/double quote - syntax highlighting isn't smart enough to pick up the escaped quote "*/
 
 /* literals */
-string      {dquot}[^\n]*{dquot}
+string      {dquot}[^"\n]*{dquot}
+/*
+"*/
 ws          [\t ]
 newline     \n
 alpha       [a-zA-Z]
