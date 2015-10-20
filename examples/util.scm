@@ -4,13 +4,13 @@
     (
         (let ans (readln (fmt "% [y/n] " prompt)))
         (if (== ans "y")
-            1
+            "y"
         (if (== ans "yes")
-            1
+            "y"
         (if (== ans "n")
-            0
+            "n"
         (if (== ans "no")
-            0
+            "n"
         (
             (println "please enter yes or no")
             (get_yn prompt)
