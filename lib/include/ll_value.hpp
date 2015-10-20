@@ -98,28 +98,17 @@ public:
         return str_val.compare(other);
     }
 
-/*
-    operator double() const
+    ll_value& operator[](const std::string& index)
     {
-        assert(type == ll_value_type::real
-            && "tried to coerce a double into some other type"); 
-        return real_val;
-    }
-*/
-
-    ll_value operator[](const std::string& index)
-    {
-        return (dict_val.count(index)) ? dict_val[index] : ll_value();
+        if(dict_val.count(index))
+            return dict_val[index];
+        else
+        {
+            dict_val[index] = ll_value();
+            return dict_val[index];
+        }
     }
 
-/*
-    operator const char*() const
-    {
-        assert(type == ll_value_type::str
-            && "tried to coerce a string into some other type"); 
-        return str_val.c_str();
-    }
-*/
     operator const std::string&() const
     {
         assert(type == ll_value_type::str
