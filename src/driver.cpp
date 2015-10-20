@@ -182,12 +182,12 @@ int main(int argc, char **argv)
                 if(genheader)
                 {
                     // add this path to the master list of includes for main.cpp
+                    mainresult |= do_codegen(gen_header, driver, filename.replace_extension(".hpp"));
                     // also add this generated header to driver itself so that it gets included in the cpp file
                     auto include = make_shared<ll_inc>(false,
                         (outdir / filename.filename()).replace_extension("").string());
                     includes.insert(include);
                     driver.includes.insert(include);
-                    mainresult |= do_codegen(gen_header, driver, filename.replace_extension(".hpp"));
                 }
 
                 if(outfile)

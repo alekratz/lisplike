@@ -34,8 +34,9 @@ lparen        \(
 rparen        \)
 squot         \'
 dquot         \"
-dot           \.
 /* ignore the weird comment/double quote - syntax highlighting isn't smart enough to pick up the escaped quote "*/
+dot           \.
+colon         :
 
 /* literals */
 string      {dquot}[^"\n]*{dquot}
@@ -88,6 +89,7 @@ loc.step();
 {rparen}        return yy::lisplike_parser::make_RPAREN(loc);
 {squot}         return yy::lisplike_parser::make_SQUOT(loc);
 {dot}           return yy::lisplike_parser::make_DOT(loc);
+{colon}         return yy::lisplike_parser::make_COLON(loc);
 
 .               { driver.error(loc, "unexpected token"); }
 %%

@@ -46,6 +46,7 @@ class lisplike_driver;
     RPAREN      ")"
     SQUOT       "'"
     DOT         "."
+    COLON       ":"
     FUN_KEYW    "fun"
     LET_KEYW    "let"
     LETM_KEYW   "letm"
