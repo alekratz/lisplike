@@ -127,6 +127,11 @@ public:
         return str_val;
     }
 
+    const ll_value& operator()() const
+    {
+        return *this;
+    }
+
 public:
     std::string str_val;
     double real_val;
