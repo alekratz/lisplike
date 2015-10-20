@@ -157,16 +157,16 @@ fundecl_exp
     ;
 
 let_exp
-    : LPAREN LET_KEYW IDENTIFIER term RPAREN { 
+    : LPAREN LET_KEYW qualified_name term RPAREN { 
         $$ = std::make_shared<ll_let_exp>(ll_let_exp(false, $3, $4));
     }
-    | LPAREN LETM_KEYW IDENTIFIER term RPAREN {
+    | LPAREN LETM_KEYW qualified_name term RPAREN {
         $$ = std::make_shared<ll_let_exp>(ll_let_exp(true, $3, $4));
     }
     ;
 
 set_exp
-    : LPAREN SET_KEYW IDENTIFIER term RPAREN { 
+    : LPAREN SET_KEYW qualified_name term RPAREN { 
         $$ = std::make_shared<ll_set_exp>(ll_set_exp($3, $4));
     }
     ;
