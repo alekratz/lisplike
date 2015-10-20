@@ -5,17 +5,17 @@
 =
 
 (fun do_factorials '(n) 
-    (if (> n 0) 
-        (
-            (println "%: %" n (factorial n))
+    (
+        (if (> n 0)
             (do_factorials (- n 1))
+            none
         )
-        none
+        (println "%: %" n (factorial n))
     )
 )
 
 (println "testing factorials")
-(do_factorials 5)
+(do_factorials 10)
 
 (println "testing fizzbuzz")
 (fizzbuzz 20)
