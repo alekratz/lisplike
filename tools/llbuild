@@ -13,6 +13,7 @@ function usage() {
     echo "-s                        follow scanning"
     echo "-p                        follow parsing"
     echo "-v                        verbose output"
+    echo "-j [jobs]                 maximum number of jobs"
 }
 
 # Check args
@@ -24,8 +25,9 @@ fi
 gendir=.
 target="a.out"
 llargs=""
+jobcount=1
 
-while getopts "o:d:hmspv" OPT; do
+while getopts "o:d:hmspvj:" OPT; do
     case $OPT in
         o)
             target=$OPTARG
@@ -47,6 +49,9 @@ while getopts "o:d:hmspv" OPT; do
             ;;
         v)
             llargs="-v $llargs"
+            ;;
+        j)
+            jobcount=$OPTARG
             ;;
         \?)
             usage
@@ -71,9 +76,13 @@ echo lisplike $llargs -o "$target" -d "$gendir" $compfiles
 lisplike $llargs -d "$gendir" $compfiles || exit 1
 echo == compiling c++ . . .
 for f in $genfiles; do
+    while [[ $(jobs | wc -l) == "$jobcount" ]]; do
+        wait
+    done
     echo "$CC" -c $f -I. -I$gendir -std=c++14 -o $f.o
-    "$CC" -c $f -I. -I$gendir -std=c++14 -o $f.o || exit 1
+    "$CC" -c $f -I. -I$gendir -std=c++14 -o $f.o || break &
 done
+wait
 echo "$CC" $ofiles -std=c++14 -o $target
 "$CC" $ofiles -std=c++14 -o "$target" || exit 1
 echo == DONE
