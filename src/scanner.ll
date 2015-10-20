@@ -55,7 +55,7 @@ bool_op     =|<|>
 ident       ({alpha}|_)({alpha}|_|{dig})*
 num         [+-]?{dig}*(\.{dig}+)?
 cond_sym    {bool_op}{bool_op}?
-comment     ;[^\n]*{newline}
+comment     ;.*$
 
 %%
 
@@ -64,9 +64,9 @@ comment     ;[^\n]*{newline}
 loc.step();
 %}
 
+{comment}       { loc.step(); }
 {newline}       { loc.lines(yyleng); loc.step(); }
 {ws}            loc.step();
-{comment}       { loc.lines(1); }
 {equals}        return yy::lisplike_parser::make_EQUALS(loc);
 {fun_keyw}      return yy::lisplike_parser::make_FUN_KEYW(loc);
 {let_keyw}      return yy::lisplike_parser::make_LET_KEYW(loc);
