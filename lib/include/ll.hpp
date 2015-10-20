@@ -49,4 +49,12 @@ inline ll_value print(const std::string& f, const T& ... tail)
     return ll_value();
 }
 
+inline ll_value readln(const std::string& prompt)
+{
+    std::cout << prompt;
+    std::string val;
+    std::cin >> val;
+    return val;
+}
+
 #endif

@@ -1,12 +1,5 @@
 ="ll"
 
-;(coll binary_tree
-;    left
-;    right
-;    trait
-;    animal
-;)
-
 
 (fun ask_q '(tree) (
         (println "does your animal have %? y/n" tree.trait)
@@ -29,4 +22,7 @@
             (ask_q tree)
         )))
     )
+)
+
+(fun start_game
 )

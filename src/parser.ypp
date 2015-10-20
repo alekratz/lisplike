@@ -207,6 +207,7 @@ term_list
 term
     : exp           { $$ = std::make_shared<ll_term>(ll_term($1)); }
     | list          { $$ = std::make_shared<ll_term>(ll_term($1)); }
+/*  | dict          { $$ = std::make_shared<ll_term>(ll_term($1)); } */
     | none          { $$ = std::make_shared<ll_term>(ll_term($1)); }
     | qualified_name{ $$ = std::make_shared<ll_term>(ll_term($1)); }
     | NUMBER        { $$ = std::make_shared<ll_term>(ll_term($1)); }
@@ -227,7 +228,11 @@ qualified_name_tail
 list
     : SQUOT LPAREN term_list RPAREN { $$ = $3; }
     ;
-
+/*
+dict
+    :
+    ;
+*/
 none: NONE_KEYW { $$ = "ll_value()"; }
     ;
 

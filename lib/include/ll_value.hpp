@@ -39,10 +39,12 @@ public:
     typedef std::map<std::string, ll_value> ll_value_dict;
 
 public:
+    ll_value(const ll_value&) = default;
     ll_value(cstref val)
         : str_val(val)
         , type(ll_value_type::str) { }
-    ll_value(const char *val)
+    template<int sz>
+    ll_value(const char (&val)[sz])
         : str_val(val)
         , type(ll_value_type::str) { }
     ll_value(double val)
@@ -90,25 +92,34 @@ public:
     int compare(int other) const
         { return (real_val - other); }
 
+    int compare(const char *other) const
+    {
+        assert(type == ll_value_type::str && "tried to compare const char* and ll_value with non-str type");
+        return str_val.compare(other);
+    }
+
+/*
     operator double() const
     {
         assert(type == ll_value_type::real
             && "tried to coerce a double into some other type"); 
         return real_val;
     }
+*/
 
     ll_value operator[](const std::string& index)
     {
         return (dict_val.count(index)) ? dict_val[index] : ll_value();
     }
 
+/*
     operator const char*() const
     {
         assert(type == ll_value_type::str
             && "tried to coerce a string into some other type"); 
         return str_val.c_str();
     }
-
+*/
     operator const std::string&() const
     {
         assert(type == ll_value_type::str
@@ -148,11 +159,86 @@ static ll_value operator%(const ll_value& left, int right)
     return static_cast<int>(left.real_val) % right;
 }
 
-template<typename T>
 static ll_value operator%(int left, const ll_value& right)
 {
     assert(right.type == ll_value_type::real && "tried to do % operation with a non real type");
     return left % static_cast<int>(right.real_val);
+}
+
+static ll_value operator+(const ll_value& left, double right)
+{
+    assert(left.type == ll_value_type::real && "tried to do + operation with a non real type");
+    return left.real_val + right;
+}
+
+static ll_value operator+(double left, const ll_value& right)
+{
+    assert(right.type == ll_value_type::real && "tried to do + operation with a non real type");
+    return left + right.real_val;
+}
+
+static ll_value operator+(const ll_value& left, const ll_value& right)
+{
+    assert(left.type == ll_value_type::real && right.type == ll_value_type::real &&
+            "tried to do + operation with a non real type");
+    return left.real_val + right.real_val;
+}
+
+static ll_value operator-(const ll_value& left, double right)
+{
+    assert(left.type == ll_value_type::real && "tried to do - operation with a non real type");
+    return left.real_val - right;
+}
+
+static ll_value operator-(double left, const ll_value& right)
+{
+    assert(right.type == ll_value_type::real && "tried to do - operation with a non real type");
+    return left - right.real_val;
+}
+
+static ll_value operator-(const ll_value& left, const ll_value& right)
+{
+    assert(left.type == ll_value_type::real && right.type == ll_value_type::real &&
+            "tried to do - operation with a non real type");
+    return left.real_val - right.real_val;
+}
+
+static ll_value operator*(const ll_value& left, double right)
+{
+    assert(left.type == ll_value_type::real && "tried to do * operation with a non real type");
+    return left.real_val * right;
+}
+
+static ll_value operator*(double left, const ll_value& right)
+{
+    assert(right.type == ll_value_type::real && "tried to do * operation with a non real type");
+    return left * right.real_val;
+}
+
+static ll_value operator*(const ll_value& left, const ll_value& right)
+{
+    assert(left.type == ll_value_type::real && right.type == ll_value_type::real &&
+            "tried to do * operation with a non real type");
+    return left.real_val * right.real_val;
+}
+
+static ll_value operator/(const ll_value& left, double right)
+{
+    assert(left.type == ll_value_type::real && "tried to do / operation with a non real type");
+    return left.real_val / right;
+}
+
+static ll_value operator/(double left, const ll_value& right)
+{
+    assert(right.type == ll_value_type::real && "tried to do / operation with a non real type");
+    return left / right.real_val;
+}
+
+static ll_value operator/(const ll_value& left, const ll_value& right)
+{
+    assert(left.type == ll_value_type::real && right.type == ll_value_type::real &&
+            "tried to do / operation with a non real type");
+    return left.real_val / right.real_val;
 }
 
 template<typename T>
@@ -162,6 +248,38 @@ inline bool operator== (const ll_value& left, const T& right)
 template<typename T>
 inline bool operator== (const T& left, const ll_value& right)
     { return right.compare(left) == 0; }
+
+template<typename T>
+inline bool operator<= (const ll_value& left, const T& right)
+    { return left.compare(right) <= 0; }
+
+template<typename T>
+inline bool operator<= (const T& left, const ll_value& right)
+    { return right.compare(left) > 0; }
+
+template<typename T>
+inline bool operator>= (const ll_value& left, const T& right)
+    { return left.compare(right) >= 0; }
+
+template<typename T>
+inline bool operator>= (const T& left, const ll_value& right)
+    { return right.compare(left) < 0; }
+
+template<typename T>
+inline bool operator< (const ll_value& left, const T& right)
+    { return left.compare(right) < 0; }
+
+template<typename T>
+inline bool operator< (const T& left, const ll_value& right)
+    { return right.compare(left) >= 0; }
+
+template<typename T>
+inline bool operator> (const ll_value& left, const T& right)
+    { return left.compare(right) > 0; }
+
+template<typename T>
+inline bool operator> (const T& left, const ll_value& right)
+    { return right.compare(left) <= 0; }
 
 inline std::ostream& operator<<(std::ostream& os, const ll_value& val)
 {

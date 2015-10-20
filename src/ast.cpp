@@ -114,7 +114,7 @@ ostream& operator<<(ostream& os, const ll_tree_p& ll_tree)
 ostream& operator<<(ostream& os, const ll_children& children)
 {
     for(auto ll : children)
-        os << ll->gencode() << "\n";
+        os << ll->gencode() << " ";
     return os;
 }
 
