@@ -33,7 +33,7 @@ string ll_let_exp::gencode()
 
 string ll_set_exp::gencode()
 {
-    return format("% = %;", identifier, term->gencode());
+    return format("% = %", identifier, term->gencode());
 }
 
 string ll_if_exp::gencode()
