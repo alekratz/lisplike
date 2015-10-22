@@ -117,10 +117,3 @@ ostream& operator<<(ostream& os, const ll_children& children)
         os << ll->gencode() << " ";
     return os;
 }
-
-ostream& operator<<(ostream& os, const ll_inc_list& includes)
-{
-    for(auto inc : includes)
-        os << inc->gencode() << "\n";
-    return os;
-}

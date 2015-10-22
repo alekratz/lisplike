@@ -72,7 +72,7 @@ if [[ $# == 0 ]]; then
 fi
 
 echo == compiling lisp . . .
-echo lisplike $llargs -o "$target" -d "$gendir" $compfiles
+echo lisplike $llargs -d "$gendir" $compfiles
 lisplike $llargs -d "$gendir" $compfiles || exit 1
 echo == compiling c++ . . .
 for f in $genfiles; do

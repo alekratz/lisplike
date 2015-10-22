@@ -192,14 +192,18 @@ int main(int argc, char **argv)
 
                 if(outfile)
                     mainresult |= do_codegen(gen_cpp, driver, filename.replace_extension(".cpp"));
+
             }
         }
-        // HACK : come up with something better than this...
-        lisplike_driver carrier;
-        carrier.ast = ast;
-        carrier.includes = includes;
+
         if(genmain)
+        {
+            // HACK : come up with something better than this...
+            lisplike_driver carrier;
+            carrier.ast = ast;
+            carrier.includes = includes;
             mainresult |= do_codegen(gen_main, carrier, path("main.cpp"));
+        }
 
         if(mainresult == 0)
             cerr << "OK" << endl;

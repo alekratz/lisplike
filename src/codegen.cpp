@@ -40,8 +40,7 @@ string gen_header(const lisplike_driver& driver)
 
     result << "#ifndef " << "_" << uuid_buf << endl;
     result << "#define " << "_" << uuid_buf << endl;
-    for(auto inc : driver.includes)
-        result << inc->gencode() << endl;
+    result << driver.includes << endl;
     // Declare header decls
     for(auto ll_child : driver.ast)
     {
@@ -58,8 +57,7 @@ string gen_cpp(const lisplike_driver& driver)
 {
     stringstream result;
 
-    for(auto inc : driver.includes)
-        result << inc->gencode() << endl;
+    result << driver.includes << endl;
 
     for(auto ll_child : driver.ast)
     {
@@ -74,9 +72,7 @@ string gen_main(const lisplike_driver& driver)
     stringstream result;
 
     // Append the includes to the top of the main function
-    for(auto inc : driver.includes)
-        result << inc->gencode() << endl;
-
+    result << driver.includes << endl;
     // Create the main function
     result << "int main(int argc, char **argv) {" << endl;
     for(auto ll_child : driver.ast)
