@@ -2,6 +2,7 @@
 "ll"
 "factorial"
 "fizzbuzz"
+"99_bottles_of_beer"
 =
 
 (fun do_factorials '(n) 
@@ -32,3 +33,6 @@
 (println "%" mvar)
 (set mvar "And now it has a different value")
 (println "%" mvar)
+
+(println "Testing 99 bottles of beer on the wall lyrics")
+(bottles 99)
