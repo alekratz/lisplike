@@ -22,6 +22,15 @@ public:
     virtual bool main_needs() { return false; }
 };
 
+class ll_decl
+{
+public:
+    ll_decl() = default;
+    virtual ~ll_decl() = default;
+
+    virtual std::string gendecl() = 0;
+};
+
 class ll_header
 {
 public:

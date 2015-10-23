@@ -14,7 +14,7 @@ INSTALL_INC=$(INSTALL_PREFIX)/include
 INSTALL_LIB=$(INSTALL_PREFIX)/lib
 
 # Input files
-CXXFILES=$(SRC)/driver.cpp $(SRC)/ast.cpp  $(SRC)/util.cpp $(SRC)/codegen.cpp
+CXXFILES=$(SRC)/driver.cpp $(SRC)/ast.cpp  $(SRC)/util.cpp $(SRC)/gencpp.cpp $(SRC)/genheader.cpp $(SRC)/genmain.cpp
 FLEXFILES=$(SRC)/scanner.ll
 BISONFILES=$(SRC)/parser.ypp
 

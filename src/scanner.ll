@@ -28,10 +28,13 @@ if_keyw     if
 inc_keyw    inc
 native_keyw native
 none_keyw   none
+struct_keyw struct
 
 /* symbols */
 lparen        \(
 rparen        \)
+lsqubracket   \[
+rsqubracket   \]
 squot         \'
 dquot         \"
 /* ignore the weird comment/double quote - syntax highlighting isn't smart enough to pick up the escaped quote "*/
@@ -77,6 +80,7 @@ loc.step();
 {inc_keyw}      return yy::lisplike_parser::make_INC_KEYW(loc);
 {native_keyw}   return yy::lisplike_parser::make_NATIVE_KEYW(loc);
 {none_keyw}     return yy::lisplike_parser::make_NONE_KEYW(loc);
+{struct_keyw}   return yy::lisplike_parser::make_STRUCT_KEYW(loc);
 {string}        return yy::lisplike_parser::make_STRING(yytext, loc);
 {ident}         return yy::lisplike_parser::make_IDENTIFIER(yytext, loc);
 {cond_sym}      return yy::lisplike_parser::make_COND_SYM(yytext, loc);
@@ -87,6 +91,8 @@ loc.step();
     }
 {lparen}        return yy::lisplike_parser::make_LPAREN(loc);
 {rparen}        return yy::lisplike_parser::make_RPAREN(loc);
+{lsqubracket}   return yy::lisplike_parser::make_LSQUBRACKET(loc);
+{rsqubracket}   return yy::lisplike_parser::make_RSQUBRACKET(loc);
 {squot}         return yy::lisplike_parser::make_SQUOT(loc);
 {dot}           return yy::lisplike_parser::make_DOT(loc);
 {colon}         return yy::lisplike_parser::make_COLON(loc);

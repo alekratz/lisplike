@@ -1,9 +1,6 @@
 #include "codegen.hpp"
-#include "ast.hpp"
 #include "format.hpp"
-#include <string>
-#include <sstream>
-#include <set>
+#include "ast.hpp"
 #include <uuid.h>
 
 #define UUID_LEN 36
@@ -23,7 +20,7 @@ string ll_fundecl_exp::genheader()
     return format("extern % %(ll_value %);", type, identifier, pad_internal(params, ", ll_value "));
 }
 
-string gen_header(const lisplike_driver& driver)
+string genheader(const lisplike_driver& driver)
 {
     stringstream result;
 
@@ -50,36 +47,5 @@ string gen_header(const lisplike_driver& driver)
         // otherwise... ignore
     }
     result << "#endif" << endl;
-    return result.str();
-}
-
-string gen_cpp(const lisplike_driver& driver)
-{
-    stringstream result;
-
-    result << driver.includes << endl;
-
-    for(auto ll_child : driver.ast)
-    {
-        if(!ll_child->main_needs())
-            result << ll_child->gencode() << endl;
-    }
-    return result.str();
-}
-
-string gen_main(const lisplike_driver& driver)
-{
-    stringstream result;
-
-    // Append the includes to the top of the main function
-    result << driver.includes << endl;
-    // Create the main function
-    result << "int main(int argc, char **argv) {" << endl;
-    for(auto ll_child : driver.ast)
-    {
-        if(ll_child->main_needs())
-            result << dynamic_pointer_cast<ll_main>(ll_child)->genmain() << ';' << endl;
-    }
-    result << "}";
     return result.str();
 }

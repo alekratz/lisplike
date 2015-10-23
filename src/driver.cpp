@@ -61,8 +61,8 @@ static vector<string> filenames;
 static path outdir = ".";
 bool verbose = false;
 static bool outfile = true;
-static bool genheader = true;
-static bool genmain = true;
+static bool should_genheader = true;
+static bool should_genmain = true;
 
 static void print_usage(int argc, char **argv)
 {
@@ -110,10 +110,10 @@ static void parse_args(int argc, char **argv, lisplike_driver &driver)
                 outfile = false;
                 break;
             case 'h':
-                genheader = false;
+                should_genheader = false;
                 break;
             case 'm':
-                genmain = false;
+                should_genmain = false;
                 break;
             case 'd':
                 outdir = path(optarg);
@@ -179,10 +179,10 @@ int main(int argc, char **argv)
             {
                 ast.insert(ast.end(), driver.ast.begin(), driver.ast.end());
                 includes.insert(driver.includes.begin(), driver.includes.end());
-                if(genheader)
+                if(should_genheader)
                 {
                     // add this path to the master list of includes for main.cpp
-                    mainresult |= do_codegen(gen_header, driver, filename.replace_extension(".hpp"));
+                    mainresult |= do_codegen(genheader, driver, filename.replace_extension(".hpp"));
                     // also add this generated header to driver itself so that it gets included in the cpp file
                     auto include = make_shared<ll_inc>(false,
                         (outdir / filename.filename()).replace_extension("").string());
@@ -191,18 +191,17 @@ int main(int argc, char **argv)
                 }
 
                 if(outfile)
-                    mainresult |= do_codegen(gen_cpp, driver, filename.replace_extension(".cpp"));
-
+                    mainresult |= do_codegen(gencpp, driver, filename.replace_extension(".cpp"));
             }
         }
 
-        if(genmain)
+        if(should_genmain)
         {
             // HACK : come up with something better than this...
             lisplike_driver carrier;
             carrier.ast = ast;
             carrier.includes = includes;
-            mainresult |= do_codegen(gen_main, carrier, path("main.cpp"));
+            mainresult |= do_codegen(genmain, carrier, path("main.cpp"));
         }
 
         if(mainresult == 0)
