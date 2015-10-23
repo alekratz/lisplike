@@ -220,7 +220,7 @@ term
     ;
 
 type_annotation
-    : COLON qualified_name
+    : COLON qualified_typename
                     { $$ = $2; }
     ;
 
@@ -231,7 +231,18 @@ qualified_name
 
 qualified_name_tail
     : DOT IDENTIFIER qualified_name_tail
-                    { $$ = "[\"" + $2 + "\"]" + $3; }
+                    { $$ = $2 + "." + $3; }
+    | %empty        { $$ = std::string(); }
+    ;
+
+qualified_typename
+    : IDENTIFIER qualified_typename_tail
+                    { $$ = $1 + $2; }
+    ;
+
+qualified_typename_tail
+    : DOT IDENTIFIER qualified_typename_tail
+                    { $$ = $2 + "::" + $3; }
     | %empty        { $$ = std::string(); }
     ;
 
