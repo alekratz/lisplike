@@ -1,6 +1,6 @@
 ="ll"
 
-(fun factorial '(x) 
+(fun factorial:int '(x) 
   (if 
       (== x 0)
       1

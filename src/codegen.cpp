@@ -20,7 +20,7 @@ string ll_let_exp::genheader()
 
 string ll_fundecl_exp::genheader()
 {
-    return format("extern ll_value %(ll_value %);", identifier, pad_internal(params, ", ll_value "));
+    return format("extern % %(ll_value %);", type, identifier, pad_internal(params, ", ll_value "));
 }
 
 string gen_header(const lisplike_driver& driver)

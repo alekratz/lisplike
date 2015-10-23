@@ -12,10 +12,12 @@ class ll_fundecl_exp
     : public ll_tree, public ll_header
 {
 public:
-    ll_fundecl_exp(cstref identifier, ll_children params, ll_term_p term)
+
+    ll_fundecl_exp(cstref identifier, cstref type, ll_children params, ll_term_p term)
     : identifier(identifier)
+    , type(type)
     , params(params)
-    , term(term) { }
+    , term(term)  { }
     virtual ~ll_fundecl_exp() = default;
 
 public:
@@ -26,6 +28,7 @@ public:
 
 public:
     std::string identifier;
+    std::string type;
     ll_children params;
     ll_term_p term;
 };

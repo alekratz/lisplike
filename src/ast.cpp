@@ -9,10 +9,10 @@ using namespace std;
 string ll_fundecl_exp::gencode()
 {
     stringstream builder;
-    builder << "ll_value " << identifier;
+    builder << type << " " << identifier;
     builder << "(ll_value " << pad_internal(params, ", ll_value ") << ")";
     builder << " {" << endl;
-    builder << format("return %;", term->gencode()) << endl;
+    builder << format("return static_cast<%>(%);", type, term->gencode()) << endl;
     builder << "}" << endl;
     return builder.str();
 }

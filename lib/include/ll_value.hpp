@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <cstdint>
 #include <cassert>
 
 /*
@@ -109,17 +110,28 @@ public:
         }
     }
 
-    operator const std::string&() const
-    {
-        assert(type == ll_value_type::str
-            && "tried to coerce a string into some other type"); 
-        return str_val;
-    }
-
     const ll_value& operator()() const
     {
         return *this;
     }
+
+    explicit operator ll_value_list() const
+        { return list_val; }
+
+    explicit operator int8_t() const { return real_val; }
+    explicit operator uint8_t() const { return real_val; }
+    explicit operator int16_t() const { return real_val; }
+    explicit operator uint16_t() const { return real_val; }
+    explicit operator int32_t() const { return real_val; }
+    explicit operator uint32_t() const { return real_val; }
+    explicit operator int64_t() const { return real_val; }
+    explicit operator uint64_t() const { return real_val; }
+
+    explicit operator double() const
+        { return real_val; }
+
+    explicit operator cstref() const
+        { return str_val; }
 
     /* values held by this class */
 private:
