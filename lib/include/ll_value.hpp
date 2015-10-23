@@ -121,12 +121,31 @@ public:
         return *this;
     }
 
-public:
+    /* values held by this class */
+private:
     std::string str_val;
     double real_val;
     ll_value_list list_val;
     ll_value_dict dict_val;
     ll_value_type type;
+private:
+    friend bool isnone(const ll_value& val);
+    friend bool operator== (const ll_value& left, const ll_value& right);
+    friend ll_value operator%(const ll_value& left, int right);
+    friend ll_value operator%(int left, const ll_value& right);
+    friend ll_value operator+(const ll_value& left, double right);
+    friend ll_value operator+(double left, const ll_value& right);
+    friend ll_value operator+(const ll_value& left, const ll_value& right);
+    friend ll_value operator-(const ll_value& left, double right);
+    friend ll_value operator-(double left, const ll_value& right);
+    friend ll_value operator-(const ll_value& left, const ll_value& right);
+    friend ll_value operator*(const ll_value& left, double right);
+    friend ll_value operator*(double left, const ll_value& right);
+    friend ll_value operator*(const ll_value& left, const ll_value& right);
+    friend ll_value operator/(const ll_value& left, double right);
+    friend ll_value operator/(double left, const ll_value& right);
+    friend ll_value operator/(const ll_value& left, const ll_value& right);
+    friend std::ostream& operator<<(std::ostream& os, const ll_value& val);
 };
 
 typedef ll_value::ll_value_list ll_value_list;
@@ -147,88 +166,88 @@ inline bool operator== (const ll_value& left, const ll_value& right)
         return left.compare(right) == 0;
 }
 
-static ll_value operator%(const ll_value& left, int right)
+inline ll_value operator%(const ll_value& left, int right)
 {
     assert(left.type == ll_value_type::real && "tried to do % operation with a non real type");
     return static_cast<int>(left.real_val) % right;
 }
 
-static ll_value operator%(int left, const ll_value& right)
+inline ll_value operator%(int left, const ll_value& right)
 {
     assert(right.type == ll_value_type::real && "tried to do % operation with a non real type");
     return left % static_cast<int>(right.real_val);
 }
 
-static ll_value operator+(const ll_value& left, double right)
+inline ll_value operator+(const ll_value& left, double right)
 {
     assert(left.type == ll_value_type::real && "tried to do + operation with a non real type");
     return left.real_val + right;
 }
 
-static ll_value operator+(double left, const ll_value& right)
+inline ll_value operator+(double left, const ll_value& right)
 {
     assert(right.type == ll_value_type::real && "tried to do + operation with a non real type");
     return left + right.real_val;
 }
 
-static ll_value operator+(const ll_value& left, const ll_value& right)
+inline ll_value operator+(const ll_value& left, const ll_value& right)
 {
     assert(left.type == ll_value_type::real && right.type == ll_value_type::real &&
             "tried to do + operation with a non real type");
     return left.real_val + right.real_val;
 }
 
-static ll_value operator-(const ll_value& left, double right)
+inline ll_value operator-(const ll_value& left, double right)
 {
     assert(left.type == ll_value_type::real && "tried to do - operation with a non real type");
     return left.real_val - right;
 }
 
-static ll_value operator-(double left, const ll_value& right)
+inline ll_value operator-(double left, const ll_value& right)
 {
     assert(right.type == ll_value_type::real && "tried to do - operation with a non real type");
     return left - right.real_val;
 }
 
-static ll_value operator-(const ll_value& left, const ll_value& right)
+inline ll_value operator-(const ll_value& left, const ll_value& right)
 {
     assert(left.type == ll_value_type::real && right.type == ll_value_type::real &&
             "tried to do - operation with a non real type");
     return left.real_val - right.real_val;
 }
 
-static ll_value operator*(const ll_value& left, double right)
+inline ll_value operator*(const ll_value& left, double right)
 {
     assert(left.type == ll_value_type::real && "tried to do * operation with a non real type");
     return left.real_val * right;
 }
 
-static ll_value operator*(double left, const ll_value& right)
+inline ll_value operator*(double left, const ll_value& right)
 {
     assert(right.type == ll_value_type::real && "tried to do * operation with a non real type");
     return left * right.real_val;
 }
 
-static ll_value operator*(const ll_value& left, const ll_value& right)
+inline ll_value operator*(const ll_value& left, const ll_value& right)
 {
     assert(left.type == ll_value_type::real && right.type == ll_value_type::real &&
             "tried to do * operation with a non real type");
     return left.real_val * right.real_val;
 }
 
-static ll_value operator/(const ll_value& left, double right)
+inline ll_value operator/(const ll_value& left, double right)
 {
     assert(left.type == ll_value_type::real && "tried to do / operation with a non real type");
     return left.real_val / right;
 }
 
-static ll_value operator/(double left, const ll_value& right)
+inline ll_value operator/(double left, const ll_value& right)
 {
     assert(right.type == ll_value_type::real && "tried to do / operation with a non real type");
     return left / right.real_val;
 }
 
-static ll_value operator/(const ll_value& left, const ll_value& right)
+inline ll_value operator/(const ll_value& left, const ll_value& right)
 {
     assert(left.type == ll_value_type::real && right.type == ll_value_type::real &&
             "tried to do / operation with a non real type");
