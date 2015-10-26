@@ -36,6 +36,7 @@ There are a number of things that need to be done. Here is a list of the stuff:
 * Move the code generation to a more friendly design pattern, rather than being hard-coded to C++.
 * Syntactic analysis before generating the C++ code. Catch things like re-declarations, immutable assignment, invalid operands (lexer doesn't catch invalid boolean operators), etc.
 * Better examples (i.e. more than just a factorial)
+* Prettier generated code output. I'm getting really tired of having to look at lambda garbage.
 
 License
 =
